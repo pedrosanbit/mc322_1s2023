@@ -66,14 +66,36 @@ public class Cliente {
 	}
 	
 	public static boolean validarDigitosVerificadores(String cpf) {
-		// TODO
-		return false;
+		int produtorio = 0;
+		int primeiroDigitoEsperado = Character.getNumericValue(cpf.charAt(9));
+		int segundoDigitoEsperado = Character.getNumericValue(cpf.charAt(10));
+
+		for (int i = 0; i < 9; i++) {
+			produtorio += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
+		}
+		produtorio *= 10;
+
+		int primeiroDigito = produtorio % 11;
+		if (primeiroDigito != primeiroDigitoEsperado) return false;
+
+		produtorio = 0;
+		for (int i = 0; i < 10; i++) {
+			produtorio += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
+		}
+		produtorio *= 10;
+
+		int segundoDigito = produtorio % 11;
+		if (segundoDigito != segundoDigitoEsperado) return false;
+
+		return true;
 	}
 	
 	public boolean validarCPF() {
 		String numbersOnlyCPF = this.cpf.replaceAll("[^0-9]", "");
 		if (numbersOnlyCPF.length() != 11) return false;
 		if (temDigitosIguais(numbersOnlyCPF)) return false;
+		if (!validarDigitosVerificadores(numbersOnlyCPF)) return false;
+		return true;
 	}
 	
 }
