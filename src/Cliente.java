@@ -70,25 +70,25 @@ public class Cliente {
 	}
 	
 	private static boolean validarDigitosVerificadores(String cpf) {
-		int produtorio = 0;
+		int somatorio = 0;
 		int primeiroDigitoEsperado = Character.getNumericValue(cpf.charAt(9));
 		int segundoDigitoEsperado = Character.getNumericValue(cpf.charAt(10));
 
 		for (int i = 0; i < 9; i++) {
-			produtorio += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
+			somatorio += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
 		}
-		produtorio *= 10;
+		somatorio *= 10;
 
-		int primeiroDigito = produtorio % 11 == 10 ? 0 : produtorio % 11;
+		int primeiroDigito = somatorio % 11 == 10 ? 0 : somatorio % 11;
 		if (primeiroDigito != primeiroDigitoEsperado) return false;
 
-		produtorio = 0;
+		somatorio = 0;
 		for (int i = 0; i < 10; i++) {
-			produtorio += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
+			somatorio += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
 		}
-		produtorio *= 10;
+		somatorio *= 10;
 
-		int segundoDigito = produtorio % 11 == 10 ? 0 : produtorio % 11;
+		int segundoDigito = somatorio % 11 == 10 ? 0 : somatorio % 11;
 		if (segundoDigito != segundoDigitoEsperado) return false;
 
 		return true;
