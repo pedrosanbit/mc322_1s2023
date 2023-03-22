@@ -1,5 +1,3 @@
-package mc322_1s2023;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Sinistro {
@@ -36,6 +34,11 @@ public class Sinistro {
 
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
+	}
+
+	@Override
+	public String toString() {
+		return "Id: " + id + "\nData: " + data + "\nEndereço: " + endereco;
 	}
 	
 }

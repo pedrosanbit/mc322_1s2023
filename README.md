@@ -1,5 +1,18 @@
-# mc322_1s2023
+## Getting Started
 
-Repositório criado para as atividades de laboratório e projeto da disciplina MC322 - Programação Orientada a Objetos no 1º semestre de 2023, ministrada pelo Prof. Marcos Medeiros Raimundo.
+Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
 
-Aluno: Pedro Sanchez Bitencourt    RA: 231133
+## Folder Structure
+
+The workspace contains two folders by default, where:
+
+- `src`: the folder to maintain sources
+- `lib`: the folder to maintain dependencies
+
+Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+
+> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+
+## Dependency Management
+
+The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).

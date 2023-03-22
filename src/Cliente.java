@@ -1,5 +1,3 @@
-package mc322_1s2023;
-
 public class Cliente {
 	private String nome;
 	private String cpf;
@@ -55,9 +53,15 @@ public class Cliente {
 		this.endereco = endereco;
 	}
 	
-	public static boolean temDigitosIguais(String cpf) {
+	@Override
+	public String toString() {
+		return "Nome: " + nome + "\nCPF: " + cpf + "\nData de Nascimento: " + dataNascimento + "\nIdade: " + idade
+				+ "\nEndereço: " + endereco;
+	}
+
+	private static boolean temDigitosIguais(String cpf) {
 		char digito = cpf.charAt(0);
-		for(int i = 1; i < cpf.length(); i++) {
+		for (int i = 1; i < cpf.length(); i++) {
 			char digitoAtual = cpf.charAt(i);
 			if(digito != digitoAtual) return false;
 			digito = digitoAtual;
@@ -65,7 +69,7 @@ public class Cliente {
 		return true;
 	}
 	
-	public static boolean validarDigitosVerificadores(String cpf) {
+	private static boolean validarDigitosVerificadores(String cpf) {
 		int produtorio = 0;
 		int primeiroDigitoEsperado = Character.getNumericValue(cpf.charAt(9));
 		int segundoDigitoEsperado = Character.getNumericValue(cpf.charAt(10));
@@ -75,7 +79,7 @@ public class Cliente {
 		}
 		produtorio *= 10;
 
-		int primeiroDigito = produtorio % 11;
+		int primeiroDigito = produtorio % 11 == 10 ? 0 : produtorio % 11;
 		if (primeiroDigito != primeiroDigitoEsperado) return false;
 
 		produtorio = 0;
@@ -84,7 +88,7 @@ public class Cliente {
 		}
 		produtorio *= 10;
 
-		int segundoDigito = produtorio % 11;
+		int segundoDigito = produtorio % 11 == 10 ? 0 : produtorio % 11;
 		if (segundoDigito != segundoDigitoEsperado) return false;
 
 		return true;

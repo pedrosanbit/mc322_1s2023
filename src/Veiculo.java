@@ -1,5 +1,3 @@
-package mc322_1s2023;
-
 public class Veiculo {
 	private String placa;
 	private String marca;
@@ -34,5 +32,10 @@ public class Veiculo {
 	public void setModelo(String modelo) {
 		this.modelo = modelo;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Placa: " + placa + "\nMarca: " + marca + "\nModelo: " + modelo;
+	}
+
 }

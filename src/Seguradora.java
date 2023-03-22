@@ -1,5 +1,3 @@
-package mc322_1s2023;
-
 public class Seguradora {
 	private String nome;
 	private String telefone;
@@ -43,6 +41,11 @@ public class Seguradora {
 
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
+	}
+
+	@Override
+	public String toString() {
+		return "Nome: " + nome + "\nTelefone: " + telefone + "\nE-mail: " + email + "\nEndereço: " + endereco;
 	}
 	
 }
