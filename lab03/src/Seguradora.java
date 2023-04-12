@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class Seguradora {
@@ -58,20 +59,25 @@ public class Seguradora {
 
 	public boolean cadastrarCliente(Cliente cliente) {
 		try {
+			if (Collections.binarySearch(listaClientes, new Cliente(cliente.getNome(), ""), (a, b) -> {
+				return a.getNome().compareTo(b.getNome());
+			}) >= 0) throw new Exception();
+
 			listaClientes.add(cliente);
 			Collections.sort(listaClientes, (a, b) -> {
 				return a.getNome().compareTo(b.getNome());
 			});
+
 			return true;
 		}
-		catch (Exception e){
+		catch (Exception e) {
 			return false;
 		}
 	}
 
 	public boolean removerCliente(String cliente) {
 		try {
-			listaClientes.remove(Collections.binarySearch(listaClientes, new Cliente(cliente, "", "01/07/1970", "", "", ""), (a, b) -> {
+			listaClientes.remove(Collections.binarySearch(listaClientes, new Cliente(cliente, ""), (a, b) -> {
 				return a.getNome().compareTo(b.getNome());
 			}));
 			return true;
@@ -91,7 +97,12 @@ public class Seguradora {
 	}
 
 	// public boolean gerarSinistro() {
+	// 	try {
+	// 		Sinistro sinistro = new Sinistro(new Date().toString(), )
+	// 	}
+	// 	catch (Exception e) {
 
+	// 	}
 	// }
 
 	public List<Sinistro> listarSinistros() {

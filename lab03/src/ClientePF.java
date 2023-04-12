@@ -4,16 +4,24 @@ import java.util.Date;
 
 public class ClientePF extends Cliente {
     private final String cpf;
+	private Date dataLicenca;
+	private String educacao;
+	private String genero;
+	private String classeEconomica;
     private Date dataNascimento;
-
-    public ClientePF(String nome, String endereco, String dataLicenca, String educacao, String genero,
-            String classeEconomica, String cpf, String dataNascimento) throws ParseException {
-        super(nome, endereco, dataLicenca, educacao, genero, classeEconomica);
-        this.cpf = cpf;
-        this.dataNascimento = DateFormat.getInstance().parse(dataNascimento);
-    }
     
-    public String getCpf() {
+    public ClientePF(String nome, String endereco, String cpf, String dataLicenca, String educacao, String genero,
+			String classeEconomica, String dataNascimento) throws ParseException {
+		super(nome, endereco);
+		this.cpf = cpf;
+		this.dataLicenca = DateFormat.getInstance().parse(dataLicenca);
+		this.educacao = educacao;
+		this.genero = genero;
+		this.classeEconomica = classeEconomica;
+		this.dataNascimento = DateFormat.getInstance().parse(dataNascimento);
+	}
+
+	public String getCpf() {
         return cpf;
     }
 
@@ -25,7 +33,39 @@ public class ClientePF extends Cliente {
         this.dataNascimento = dataNascimento;
     }
     
-    private static boolean temDigitosIguais(String cpf) {
+    public Date getDataLicenca() {
+		return dataLicenca;
+	}
+
+	public void setDataLicenca(Date dataLicenca) {
+		this.dataLicenca = dataLicenca;
+	}
+
+	public String getEducacao() {
+		return educacao;
+	}
+
+	public void setEducacao(String educacao) {
+		this.educacao = educacao;
+	}
+
+	public String getGenero() {
+		return genero;
+	}
+
+	public void setGenero(String genero) {
+		this.genero = genero;
+	}
+
+	public String getClasseEconomica() {
+		return classeEconomica;
+	}
+
+	public void setClasseEconomica(String classeEconomica) {
+		this.classeEconomica = classeEconomica;
+	}
+
+	private static boolean temDigitosIguais(String cpf) {
 		char digito = cpf.charAt(0);
 		for (int i = 1; i < cpf.length(); i++) {
 			char digitoAtual = cpf.charAt(i);
