@@ -1,43 +1,58 @@
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class ClientePF extends Cliente {
+	//Atributos
     private final String cpf;
-	private Date dataLicenca;
+	private LocalDate dataLicenca;
 	private String educacao;
 	private String genero;
 	private String classeEconomica;
-    private Date dataNascimento;
-    
+    private LocalDate dataNascimento;
+
+    //Construtor
     public ClientePF(String nome, String endereco, String cpf, String dataLicenca, String educacao, String genero,
-			String classeEconomica, String dataNascimento) throws ParseException {
+			String classeEconomica, String dataNascimento) {
 		super(nome, endereco);
 		this.cpf = cpf;
-		this.dataLicenca = DateFormat.getInstance().parse(dataLicenca);
 		this.educacao = educacao;
 		this.genero = genero;
 		this.classeEconomica = classeEconomica;
-		this.dataNascimento = DateFormat.getInstance().parse(dataNascimento);
+		
+		try {
+			this.dataLicenca = LocalDate.parse(dataLicenca, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		}
+		catch (DateTimeParseException e) {
+			this.dataLicenca = LocalDate.now();
+		}
+
+		try {
+			this.dataNascimento = LocalDate.parse(dataNascimento, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		}
+		catch (DateTimeParseException e){
+			this.dataNascimento = LocalDate.MIN;
+		}
 	}
 
+	//Getters e Setters
 	public String getCpf() {
         return cpf;
     }
 
-    public Date getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
     
-    public Date getDataLicenca() {
+    public LocalDate getDataLicenca() {
 		return dataLicenca;
 	}
 
-	public void setDataLicenca(Date dataLicenca) {
+	public void setDataLicenca(LocalDate dataLicenca) {
 		this.dataLicenca = dataLicenca;
 	}
 
@@ -65,6 +80,14 @@ public class ClientePF extends Cliente {
 		this.classeEconomica = classeEconomica;
 	}
 
+	//toString override
+	@Override
+	public String toString() {
+		return "{\nnome: " + this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncpf: " + cpf + ",\ndataLicenca: " + dataLicenca.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ",\neducacao: " + educacao + ",\ngenero: "
+				+ genero + ",\nclasseEconomica: " + classeEconomica + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
+	}
+
+	//Valida se um CPF possui todos os digitos iguais
 	private static boolean temDigitosIguais(String cpf) {
 		char digito = cpf.charAt(0);
 		for (int i = 1; i < cpf.length(); i++) {
@@ -75,6 +98,7 @@ public class ClientePF extends Cliente {
 		return true;
 	}
 	
+	//Valida se os digitos verificadores estão corretos em um CPF
 	private static boolean validarDigitosVerificadores(String cpf) {
 		int somatorio = 0;
 		int primeiroDigitoEsperado = Character.getNumericValue(cpf.charAt(9));
@@ -100,8 +124,9 @@ public class ClientePF extends Cliente {
 		return true;
 	}
 	
-	public boolean validarCPF() {
-		String numbersOnlyCPF = this.cpf.replaceAll("[^0-9]", "");
+	//Valida o CPF da Pessoa Física
+	public static boolean validarCPF(String cpf) {
+		String numbersOnlyCPF = cpf.replaceAll("[^0-9]", "");
 		if (numbersOnlyCPF.length() != 11) return false;
 		if (temDigitosIguais(numbersOnlyCPF)) return false;
 		if (!validarDigitosVerificadores(numbersOnlyCPF)) return false;

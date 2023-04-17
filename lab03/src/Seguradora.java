@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class Seguradora {
+	//Atributos
 	private String nome;
 	private String telefone;
 	private String email;
@@ -11,6 +11,7 @@ public class Seguradora {
 	private List<Sinistro> listaSinistros;
 	private List<Cliente> listaClientes;
 	
+	//Construtor
 	public Seguradora(String nome, String telefone, String email, String endereco) {
 		this.nome = nome;
 		this.telefone = telefone;
@@ -20,6 +21,7 @@ public class Seguradora {
 		listaClientes = new ArrayList<Cliente>();
 	}
 
+	//Getters e Setters
 	public String getNome() {
 		return nome;
 	}
@@ -52,34 +54,45 @@ public class Seguradora {
 		this.endereco = endereco;
 	}
 
+	public List<Sinistro> getListaSinistros() {
+		return listaSinistros;
+	}
+
+	public List<Cliente> getListaClientes() {
+		return listaClientes;
+	}
+
+	//toString override
 	@Override
 	public String toString() {
-		return "Nome: " + nome + "\nTelefone: " + telefone + "\nE-mail: " + email + "\nEndereço: " + endereco;
+		return "{\nnome: " + nome + ",\ntelefone: " + telefone + ",\nemail: " + email + ",\nendereco: " + endereco + "\n}";
 	}
 
+	//Cadastra um cliente e o adiciona à lista de Clientes da Seguradora
 	public boolean cadastrarCliente(Cliente cliente) {
-		try {
-			if (Collections.binarySearch(listaClientes, new Cliente(cliente.getNome(), ""), (a, b) -> {
-				return a.getNome().compareTo(b.getNome());
-			}) >= 0) throw new Exception();
+		int index = Collections.binarySearch(listaClientes, cliente, new ClienteComparator());
+		if (index >= 0 && index <= listaClientes.size()) return false;
 
-			listaClientes.add(cliente);
-			Collections.sort(listaClientes, (a, b) -> {
-				return a.getNome().compareTo(b.getNome());
-			});
+		listaClientes.add(cliente);
+		Collections.sort(listaClientes, new ClienteComparator());
 
-			return true;
-		}
-		catch (Exception e) {
-			return false;
-		}
+		return true;
 	}
 
+	//Remove um cliente da lista de clientes pelo seu CPF ou CNPJ
 	public boolean removerCliente(String cliente) {
 		try {
-			listaClientes.remove(Collections.binarySearch(listaClientes, new Cliente(cliente, ""), (a, b) -> {
-				return a.getNome().compareTo(b.getNome());
-			}));
+			String numbersOnlyCode = cliente.replaceAll("[^0-9]", "");
+			int index = -1;
+			if (numbersOnlyCode.length() == 11) {
+				index = Collections.binarySearch(listaClientes, new ClientePF("", "", cliente, "", "", "", "", ""), new ClienteComparator());
+			}
+			else if (numbersOnlyCode.length() == 14) {
+				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", cliente, ""), new ClienteComparator());
+			}
+			if (index < 0 || index >= listaClientes.size()) return false;
+
+			listaClientes.remove(index);
 			return true;
 		}
 		catch (Exception e) {
@@ -87,6 +100,7 @@ public class Seguradora {
 		}
 	}
 	
+	//Retorna uma lista de todos os cliente do tipo passado registrados na lista de clientes da Seguradora
 	public List<Cliente> listarClientes(String tipoCliente) {
 		List<Cliente> lista = new ArrayList<Cliente>();
 		for (Cliente cliente: listaClientes) {
@@ -96,16 +110,39 @@ public class Seguradora {
 		return lista;
 	}
 
-	// public boolean gerarSinistro() {
-	// 	try {
-	// 		Sinistro sinistro = new Sinistro(new Date().toString(), )
-	// 	}
-	// 	catch (Exception e) {
+	//Gera um sinistro com os parâmetros passados e o adiciona à lista de Sinistros da Seguradora
+	public boolean gerarSinistro(String data, String endereco, Veiculo veiculo, String cliente) {
+		if (Collections.binarySearch(listaClientes, new Cliente(cliente, ""), new ClienteComparator()) < 0) return false;
+		
+		Cliente clienteSinistro = listaClientes.get(Collections.binarySearch(listaClientes, new Cliente(cliente, ""), new ClienteComparator()));
 
-	// 	}
-	// }
+		Sinistro sinistro = new Sinistro(data, endereco, this, veiculo, clienteSinistro);
+		listaSinistros.add(sinistro);
+		Collections.sort(listaSinistros, new SinistroComparator());
+		
+		return true;
+	}
 
-	public List<Sinistro> listarSinistros() {
-		return listaSinistros;
+	//Exibe a lista de sinistros da Seguradora na tela
+	public void listarSinistros() {
+		for (Sinistro sinistro: listaSinistros) {
+			System.out.println(sinistro);
+		}
+	}
+
+	//Exibe um sinistro associado a um cliente
+	public boolean visualizarSinistro(String cliente) {
+		String numbersOnlyCode = cliente.replaceAll("[^0-9]", "");
+		int index = -1;
+		if (numbersOnlyCode.length() == 11) {
+			index = Collections.binarySearch(listaSinistros, new Sinistro("", "", null, null, new ClientePF("", "", cliente, "", "", "", "", "")), new SinistroComparator());
+		}
+		else if (numbersOnlyCode.length() == 14) {
+			index = Collections.binarySearch(listaSinistros, new Sinistro("", "", null, null, new ClientePJ("", "", cliente, "")), new SinistroComparator());
+		}
+		if (index < 0 || index >= listaSinistros.size()) return false;
+
+		System.out.println(listaSinistros.get(index));
+		return true;
 	}
 }

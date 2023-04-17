@@ -68,7 +68,7 @@ public class Sinistro {
 
 	@Override
 	public String toString() {
-		return "Id: " + id + "\nData: " + data + "\nEndereço: " + endereco;
+		return "{\nid: " + id + ",\ndata: " + data + ",\nendereco: " + endereco + ",\nseguradora: " + seguradora.toString() + ",\nveiculo: " + veiculo.toString() + ",\ncliente: " + cliente.toString() + "\n}";
 	}
 	
 }

@@ -2,16 +2,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cliente {
+	//Atributos
 	private String nome;
 	private String endereco;
 	private List<Veiculo> listaVeiculos;
 
+	//Construtor
 	public Cliente(String nome, String endereco) {
 		this.nome = nome;
 		this.endereco = endereco;
 		this.listaVeiculos = new ArrayList<Veiculo>();
 	}
 
+	//Getters e Setters
 	public String getNome() {
 		return nome;
 	}
@@ -32,6 +35,13 @@ public class Cliente {
 		return listaVeiculos;
 	}
 	
+	//toString override
+	@Override
+	public String toString() {
+		return "{\nnome: " + nome + ",\nendereco: " + endereco + "\n}";
+	}
+	
+	//Adiciona um veículo à lista de veículos
 	public boolean adicionarVeiculo(Veiculo veiculo) {
 		try {
 			listaVeiculos.add(veiculo);
