@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Cliente {
@@ -43,13 +44,16 @@ public class Cliente {
 	
 	//Adiciona um veículo à lista de veículos
 	public boolean adicionarVeiculo(Veiculo veiculo) {
-		try {
-			listaVeiculos.add(veiculo);
-			return true;
-		}
-		catch (Exception e) {
-			return false;
-		}
+		if (Collections.binarySearch(listaVeiculos, veiculo, (a, b) -> {
+			return a.getPlaca().compareTo(b.getPlaca());
+		}) >= 0) return false;
+
+		listaVeiculos.add(veiculo);
+		Collections.sort(listaVeiculos, (a, b) -> {
+			return a.getPlaca().compareTo(b.getPlaca());
+		});
+
+		return true;
 	}
 
 }
