@@ -92,6 +92,11 @@ public class Seguradora {
 			}
 			if (index < 0 || index >= listaClientes.size()) return false;
 
+			for (int i = 0; i < listaSinistros.size(); i++) {
+				if (listaSinistros.get(i).getCliente().equals(listaClientes.get(index))) {
+					listaSinistros.remove(i); 
+				}
+			}
 			listaClientes.remove(index);
 			return true;
 		}
