@@ -68,14 +68,6 @@ public class ClientePJ extends Cliente {
         return true;
     }
 
-    //Valida o CNPJ da Pessoa Jurídica
-    public static boolean validarCNPJ(String cnpj) {
-        String numbersOnlyCNPJ = cnpj.replaceAll("[^0-9]", "");
-        if (numbersOnlyCNPJ.length() != 14) return false;
-        if (!validarDigitosVerificadores(numbersOnlyCNPJ)) return false;
-        return true;
-    }
-
     public double calculaScore() {
         return CalcSeguro.VALOR_BASE.getValor() * (1 + qtdeFuncionarios/100) * this.getListaVeiculos().size();
     }
@@ -101,7 +93,7 @@ public class ClientePJ extends Cliente {
         }
     
         //Valida o CNPJ da Pessoa Jurídica
-        public static boolean validarCodigo(String codigo) {
+        public boolean validarCodigo(String codigo) {
             String numbersOnlyCNPJ = codigo.replaceAll("[^0-9]", "");
             if (numbersOnlyCNPJ.length() != 14) return false;
             if (!validarDigitosVerificadores(numbersOnlyCNPJ)) return false;

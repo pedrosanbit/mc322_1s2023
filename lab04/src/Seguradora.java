@@ -1,6 +1,8 @@
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class Seguradora {
 	//Atributos
@@ -117,10 +119,17 @@ public class Seguradora {
 
 	//Gera um sinistro com os parâmetros passados e o adiciona à lista de Sinistros da Seguradora
 	public boolean gerarSinistro(String data, String endereco, Veiculo veiculo, String cliente) {
-		if (Collections.binarySearch(listaClientes, new Cliente(cliente, ""), new ClienteComparator()) < 0) return false;
+		String numbersOnlyCode = cliente.replaceAll("[^0-9]", "");
+		int index = -1;
+		if (numbersOnlyCode.length() == 11) {
+			index = Collections.binarySearch(listaClientes, new ClientePF("", "", cliente, "", "", "", "", ""), new ClienteComparator());
+		}
+		else if (numbersOnlyCode.length() == 14) {
+			index = Collections.binarySearch(listaClientes, new ClientePJ("", "", cliente, "", 0), new ClienteComparator());
+		}
+		if (index < 0) return false;
 		
-		Cliente clienteSinistro = listaClientes.get(Collections.binarySearch(listaClientes, new Cliente(cliente, ""), new ClienteComparator()));
-
+		Cliente clienteSinistro = listaClientes.get(index);
 		Sinistro sinistro = new Sinistro(data, endereco, this, veiculo, clienteSinistro);
 		listaSinistros.add(sinistro);
 		Collections.sort(listaSinistros, new SinistroComparator());
@@ -163,5 +172,16 @@ public class Seguradora {
 		for(Cliente cliente : listaClientes) {
 			cliente.setValorSeguro(cliente.calculaScore() * (1 + this.getQuantidadeSinistros(cliente)));
 		}
+	}
+
+	public void calcularReceita() {
+		double receita = 0;
+		Locale locale = new Locale("pt", "BR");
+		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+
+		for(Cliente cliente : listaClientes) {
+			receita += cliente.getValorSeguro();
+		}
+		System.out.println(currencyFormatter.format(receita));
 	}
 }

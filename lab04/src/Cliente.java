@@ -45,6 +45,18 @@ public class Cliente {
 		this.valorSeguro = valorSeguro;
 	}
 
+	public String getCodigo() {
+		if (this instanceof ClientePF) {
+			ClientePF clientePF = (ClientePF) this;
+			return clientePF.getCpf();
+		}
+		else if (this instanceof ClientePJ) {
+			ClientePJ clientePJ = (ClientePJ) this;
+			return clientePJ.getCnpj();
+		}
+		return "";
+	}
+
 	//toString override
 	@Override
 	public String toString() {
@@ -70,8 +82,9 @@ public class Cliente {
 	}
 
 	public static class Validacao {
-		public static boolean validarNome(String nome) {
-			return nome.matches("[a-zA-Z]+");
+		public boolean validarNome(String nome) {
+			return nome.trim().matches("^\\p{L}+[\\p{L}\\p{Z}\\p{P}]{0,}");
 		}
 	}
+	
 }

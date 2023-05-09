@@ -180,7 +180,7 @@ public class ClientePF extends Cliente {
 			return true;
 		}
 
-		public static boolean validarCodigo(String codigo) {
+		public boolean validarCodigo(String codigo) {
 			String numbersOnlyCPF = codigo.replaceAll("[^0-9]", "");
 			if (numbersOnlyCPF.length() != 11) return false;
 			if (temDigitosIguais(numbersOnlyCPF)) return false;
