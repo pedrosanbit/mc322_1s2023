@@ -48,31 +48,12 @@ public class ClientePJ extends Cliente {
         return "{\nnome: "+ this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncnpj: " + cnpj + ",\ndataFundacao: " + dataFundacao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
     }
 
-    //Valida se os digitos verificadores de um CNPJ estão corretos
-    private static boolean validarDigitosVerificadores(String cnpj) {
-        int somatorio = 0;
-        int primeiroDigitoEsperado = Character.getNumericValue(cnpj.charAt(12));
-        int segundoDigitoEsperado = Character.getNumericValue(cnpj.charAt(13));
-        int[] fatores1 = { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
-        int[] fatores2 = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
-
-        for (int i = 0; i < 12; i++) somatorio += Character.getNumericValue(cnpj.charAt(i)) * fatores1[i];
-        int primeiroDigito = somatorio % 11 < 2 ? 0 : 11 - (somatorio % 11);
-        if(primeiroDigito != primeiroDigitoEsperado) return false;
-        
-        somatorio = 0;
-        for (int i = 0; i < 13; i++) somatorio += Character.getNumericValue(cnpj.charAt(i)) * fatores2[i];
-        int segundoDigito = somatorio % 11 < 2 ? 0 : 11 - (somatorio % 11);
-        if(segundoDigito != segundoDigitoEsperado) return false;
-
-        return true;
-    }
-
     public double calculaScore() {
         return CalcSeguro.VALOR_BASE.getValor() * (1 + qtdeFuncionarios/100) * this.getListaVeiculos().size();
     }
 
     public static class Validacao {
+        //Valida se os digitos verificadores de um CNPJ estão corretos
         private static boolean validarDigitosVerificadores(String codigo) {
             int somatorio = 0;
             int primeiroDigitoEsperado = Character.getNumericValue(codigo.charAt(12));

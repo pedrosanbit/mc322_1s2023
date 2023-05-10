@@ -27,8 +27,8 @@ public enum MenuOperacoes {
     SAIR(0,0),
     INICIO(7,0);
 
-    public final int operacaoPrimaria;
-    public final int operacaoSecundaria;
+    private final int operacaoPrimaria;
+    private final int operacaoSecundaria;
 
     MenuOperacoes(int operacaoPrimaria, int operacaoSecundaria) {
         this.operacaoPrimaria = operacaoPrimaria;
@@ -243,6 +243,60 @@ public enum MenuOperacoes {
         return indexes;
     }
 
+    private static int[] gerarSinistro(List<Seguradora> listaSeguradoras, Scanner scanner, String codigo) {
+        System.out.print("Índice da Seguradora no sistema: ");
+        int indiceSeguradora = Integer.parseInt(scanner.nextLine());
+        Seguradora seguradora = listaSeguradoras.get(indiceSeguradora);
+        String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
+	    int indiceCliente = -1;
+		if (numbersOnlyCode.length() == 11) {
+			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", codigo, "", "", "", "", ""), new ClienteComparator());
+		}
+		else if (numbersOnlyCode.length() == 14) {
+			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", codigo, "", 0), new ClienteComparator());
+		}
+        System.out.print("Placa do Veiculo: ");
+        String placa = scanner.nextLine();
+        int indiceVeiculo = Collections.binarySearch(seguradora.getListaClientes().get(indiceCliente).getListaVeiculos(), new Veiculo(placa, "", "", 0), (a, b) -> {
+			return a.getPlaca().compareTo(b.getPlaca());
+		});
+        int indexes[] = { indiceSeguradora, indiceCliente, indiceVeiculo };
+        return indexes;
+    }
+
+    private static int[] transferirSeguro(List<Seguradora> listaSeguradoras, Scanner scanner) {
+        System.out.print("Índice da Seguradora no sistema: ");
+        int indiceSeguradora = Integer.parseInt(scanner.nextLine());
+        Seguradora seguradora = listaSeguradoras.get(indiceSeguradora);
+        System.out.print("CPF/CNPJ do Cliente do qual o Seguro será transferido: ");
+        String codigo = scanner.nextLine();
+        String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
+	    int indiceCliente1 = -1;
+		if (numbersOnlyCode.length() == 11) {
+			indiceCliente1 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", codigo, "", "", "", "", ""), new ClienteComparator());
+		}
+		else if (numbersOnlyCode.length() == 14) {
+			indiceCliente1 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", codigo, "", 0), new ClienteComparator());
+		}
+        System.out.print("CPF/CNPJ do Cliente que receberá a transferência: ");
+        codigo = scanner.nextLine();
+        numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
+	    int indiceCliente2 = -1;
+		if (numbersOnlyCode.length() == 11) {
+			indiceCliente2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", codigo, "", "", "", "", ""), new ClienteComparator());
+		}
+		else if (numbersOnlyCode.length() == 14) {
+			indiceCliente2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", codigo, "", 0), new ClienteComparator());
+		}
+        int[] indexes = { indiceSeguradora, indiceCliente1, indiceCliente2 };
+        return indexes;
+    }
+
+    private static int calcularReceitaSeguradora(Scanner scanner) {
+        System.out.print("Índice da Seguradora no sistema: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
+
     public static void menuOperacoes(List<Seguradora> listaSeguradoras) {
         Scanner scanner = new Scanner(System.in);
         int operacaoPrimaria = INICIO.getOperacaoPrimaria();
@@ -344,7 +398,7 @@ public enum MenuOperacoes {
                     operacaoSecundaria = Integer.parseInt(scanner.nextLine());
                 }
                 else if (operacaoSecundaria == EXCLUIR_CLIENTE.getOperacaoSecundaria()) {
-                    System.out.println("CPF/CNPJ do Cliente: ");
+                    System.out.print("CPF/CNPJ do Cliente: ");
                     String codigo = scanner.nextLine();
                     listaSeguradoras.get(excluirCliente(listaSeguradoras, scanner)).removerCliente(codigo);
                     operacaoSecundaria = EXCLUIR.getOperacaoSecundaria();
@@ -368,6 +422,32 @@ public enum MenuOperacoes {
                     operacaoPrimaria = EXCLUIR.getOperacaoPrimaria();
                     operacaoSecundaria = EXCLUIR.getOperacaoSecundaria();
                 }
+            }
+            else if (operacaoPrimaria == GERAR_SINISTRO.getOperacaoPrimaria()) {
+                System.out.print("Data: ");
+                String data = scanner.nextLine();
+                System.out.print("Endereço: ");
+                String endereco = scanner.nextLine();
+                System.out.print("CPF/CNPJ do cliente: ");
+                String codigo = scanner.nextLine();
+                int indices[] = gerarSinistro(listaSeguradoras, scanner, codigo);
+                Veiculo veiculo = listaSeguradoras.get(indices[0]).getListaClientes().get(indices[1]).getListaVeiculos().get(indices[2]);
+                listaSeguradoras.get(indices[0]).gerarSinistro(data, endereco, veiculo, codigo);
+                operacaoPrimaria = INICIO.getOperacaoPrimaria();
+                operacaoSecundaria = INICIO.getOperacaoSecundaria();
+            }
+            else if (operacaoPrimaria == TRANSFERIR_SEGURO.getOperacaoPrimaria()) {
+                int indices[] = transferirSeguro(listaSeguradoras, scanner);
+                listaSeguradoras.get(indices[0]).getListaClientes().get(indices[2]).getListaVeiculos().addAll(listaSeguradoras.get(indices[0]).getListaClientes().get(indices[1]).getListaVeiculos());
+                listaSeguradoras.get(indices[0]).getListaClientes().get(indices[1]).getListaVeiculos().clear();
+                listaSeguradoras.get(indices[0]).calcularPrecoSeguroCliente();
+                operacaoPrimaria = INICIO.getOperacaoPrimaria();
+                operacaoSecundaria = INICIO.getOperacaoSecundaria();
+            }
+            else if (operacaoPrimaria == CALCULAR_RECEITA_SEGURADORA.getOperacaoPrimaria()) {
+                listaSeguradoras.get(calcularReceitaSeguradora(scanner)).calcularReceita();
+                operacaoPrimaria = INICIO.getOperacaoPrimaria();
+                operacaoSecundaria = INICIO.getOperacaoSecundaria();
             }
             else {
                 System.out.println("Operação inválida.");

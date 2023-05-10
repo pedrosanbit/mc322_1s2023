@@ -88,52 +88,6 @@ public class ClientePF extends Cliente {
 				+ genero + ",\nclasseEconomica: " + classeEconomica + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
 	}
 
-	//Valida se um CPF possui todos os digitos iguais
-	private static boolean temDigitosIguais(String cpf) {
-		char digito = cpf.charAt(0);
-		for (int i = 1; i < cpf.length(); i++) {
-			char digitoAtual = cpf.charAt(i);
-			if(digito != digitoAtual) return false;
-			digito = digitoAtual;
-		}
-		return true;
-	}
-	
-	//Valida se os digitos verificadores estão corretos em um CPF
-	private static boolean validarDigitosVerificadores(String cpf) {
-		int somatorio = 0;
-		int primeiroDigitoEsperado = Character.getNumericValue(cpf.charAt(9));
-		int segundoDigitoEsperado = Character.getNumericValue(cpf.charAt(10));
-
-		for (int i = 0; i < 9; i++) {
-			somatorio += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
-		}
-		somatorio *= 10;
-
-		int primeiroDigito = somatorio % 11 == 10 ? 0 : somatorio % 11;
-		if (primeiroDigito != primeiroDigitoEsperado) return false;
-
-		somatorio = 0;
-		for (int i = 0; i < 10; i++) {
-			somatorio += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
-		}
-		somatorio *= 10;
-
-		int segundoDigito = somatorio % 11 == 10 ? 0 : somatorio % 11;
-		if (segundoDigito != segundoDigitoEsperado) return false;
-
-		return true;
-	}
-	
-	//Valida o CPF da Pessoa Física
-	public static boolean validarCPF(String cpf) {
-		String numbersOnlyCPF = cpf.replaceAll("[^0-9]", "");
-		if (numbersOnlyCPF.length() != 11) return false;
-		if (temDigitosIguais(numbersOnlyCPF)) return false;
-		if (!validarDigitosVerificadores(numbersOnlyCPF)) return false;
-		return true;
-	}
-
 	public double calculaScore() {
 		long idade = ChronoUnit.YEARS.between(this.dataNascimento, LocalDate.now());
 		double valorBase = CalcSeguro.VALOR_BASE.getValor();
@@ -145,6 +99,7 @@ public class ClientePF extends Cliente {
 	}
 
 	public static class Validacao {
+		//Valida se um CPF possui todos os digitos iguais
 		private static boolean temDigitosIguais(String cpf) {
 			char digito = cpf.charAt(0);
 			for (int i = 1; i < cpf.length(); i++) {
@@ -155,6 +110,7 @@ public class ClientePF extends Cliente {
 			return true;
 		}
 
+		//Valida se os digitos verificadores estão corretos em um CPF
 		private static boolean validarDigitosVerificadores(String codigo) {
 			int somatorio = 0;
 			int primeiroDigitoEsperado = Character.getNumericValue(codigo.charAt(9));
@@ -180,6 +136,7 @@ public class ClientePF extends Cliente {
 			return true;
 		}
 
+		//Valida o CPF da Pessoa Física
 		public boolean validarCodigo(String codigo) {
 			String numbersOnlyCPF = codigo.replaceAll("[^0-9]", "");
 			if (numbersOnlyCPF.length() != 11) return false;
