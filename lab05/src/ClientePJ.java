@@ -1,18 +1,23 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientePJ extends Cliente {
-    //Atributos
+    // Atributos
     private final String cnpj;
     private LocalDate dataFundacao;
     private int qtdeFuncionarios;
+    private List<Frota> listaFrota;
 
-    //Construtor
-    public ClientePJ(String nome, String endereco, String cnpj, String dataFundacao, int qtdeFuncionarios) {
-        super(nome, endereco);
+    // Construtor
+    public ClientePJ(String nome, String telefone, String endereco, String email, String cnpj, String dataFundacao,
+            int qtdeFuncionarios, List<Frota> listaFrota) {
+        super(nome, telefone, endereco, email);
         this.cnpj = cnpj;
         this.qtdeFuncionarios = qtdeFuncionarios;
+        this.listaFrota = new ArrayList<Frota>();
         try {
             this.dataFundacao = LocalDate.parse(dataFundacao, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
@@ -21,7 +26,7 @@ public class ClientePJ extends Cliente {
         }
     }
 
-    //Getters e Setters
+    // Getters e Setters
     public String getCnpj() {
         return cnpj;
     }
@@ -29,7 +34,7 @@ public class ClientePJ extends Cliente {
     public LocalDate getDataFundacao() {
         return dataFundacao;
     }
-    
+
     public void setDataFundacao(LocalDate dataFundacao) {
         this.dataFundacao = dataFundacao;
     }
@@ -42,14 +47,23 @@ public class ClientePJ extends Cliente {
         this.qtdeFuncionarios = qtdeFuncionarios;
     }
 
-    //toString override
-    @Override
-    public String toString() {
-        return "{\nnome: "+ this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncnpj: " + cnpj + ",\ndataFundacao: " + dataFundacao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
+    public List<Frota> getListaFrota() {
+        return listaFrota;
     }
 
-    public double calculaScore() {
-        return CalcSeguro.VALOR_BASE.getValor() * (1 + qtdeFuncionarios/100) * this.getListaVeiculos().size();
+    public boolean cadastrarFrota() {
+        //TODO
+        return true;
+    }
+    
+    public boolean atualizarFrota() {
+        //TODO
+        return true;
+    }
+
+    public boolean getVeiculosPorFrota() {
+        //TODO
+        return true;
     }
 
     public static class Validacao {

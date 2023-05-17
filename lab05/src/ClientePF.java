@@ -4,6 +4,14 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 public class ClientePF extends Cliente {
+	private final String cpf;
+	private String genero;
+	private String educacao;
+	private LocalDate dataNascimento;
+	private List<Veiculo> listaVeiculos;
+}
+
+public class ClientePF extends Cliente {
 	//Atributos
     private final String cpf;
 	private LocalDate dataLicenca;
