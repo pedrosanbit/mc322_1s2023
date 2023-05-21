@@ -66,6 +66,12 @@ public class ClientePJ extends Cliente {
         return true;
     }
 
+    //toString override
+    @Override
+    public String toString() {
+        return "{\nnome: "+ this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncnpj: " + cnpj + ",\ndataFundacao: " + dataFundacao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
+    }
+
     public static class Validacao {
         //Valida se os digitos verificadores de um CNPJ estão corretos
         private static boolean validarDigitosVerificadores(String codigo) {

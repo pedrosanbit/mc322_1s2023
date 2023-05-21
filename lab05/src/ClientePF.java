@@ -1,41 +1,23 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class ClientePF extends Cliente {
+	// Atributos
 	private final String cpf;
 	private String genero;
 	private String educacao;
 	private LocalDate dataNascimento;
 	private List<Veiculo> listaVeiculos;
-}
 
-public class ClientePF extends Cliente {
-	//Atributos
-    private final String cpf;
-	private LocalDate dataLicenca;
-	private String educacao;
-	private String genero;
-	private String classeEconomica;
-    private LocalDate dataNascimento;
-
-    //Construtor
-    public ClientePF(String nome, String endereco, String cpf, String dataLicenca, String educacao, String genero,
-			String classeEconomica, String dataNascimento) {
-		super(nome, endereco);
+	// Construtor
+	public ClientePF(String nome, String telefone, String endereco, String email, String cpf, String genero,
+			String educacao, String dataNascimento) {
+		super(nome, telefone, endereco, email);
 		this.cpf = cpf;
-		this.educacao = educacao;
 		this.genero = genero;
-		this.classeEconomica = classeEconomica;
-		
-		try {
-			this.dataLicenca = LocalDate.parse(dataLicenca, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		}
-		catch (DateTimeParseException e) {
-			this.dataLicenca = LocalDate.now();
-		}
-
+		this.educacao = educacao;
 		try {
 			this.dataNascimento = LocalDate.parse(dataNascimento, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		}
@@ -44,33 +26,9 @@ public class ClientePF extends Cliente {
 		}
 	}
 
-	//Getters e Setters
+	// Getters and Setter
 	public String getCpf() {
-        return cpf;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-    
-    public LocalDate getDataLicenca() {
-		return dataLicenca;
-	}
-
-	public void setDataLicenca(LocalDate dataLicenca) {
-		this.dataLicenca = dataLicenca;
-	}
-
-	public String getEducacao() {
-		return educacao;
-	}
-
-	public void setEducacao(String educacao) {
-		this.educacao = educacao;
+		return cpf;
 	}
 
 	public String getGenero() {
@@ -81,29 +39,41 @@ public class ClientePF extends Cliente {
 		this.genero = genero;
 	}
 
-	public String getClasseEconomica() {
-		return classeEconomica;
+	public String getEducacao() {
+		return educacao;
 	}
 
-	public void setClasseEconomica(String classeEconomica) {
-		this.classeEconomica = classeEconomica;
+	public void setEducacao(String educacao) {
+		this.educacao = educacao;
 	}
 
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+
+	public List<Veiculo> getListaVeiculos() {
+		return listaVeiculos;
+	}	
+	
 	//toString override
 	@Override
 	public String toString() {
-		return "{\nnome: " + this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncpf: " + cpf + ",\ndataLicenca: " + dataLicenca.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ",\neducacao: " + educacao + ",\ngenero: "
-				+ genero + ",\nclasseEconomica: " + classeEconomica + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
+		return "{\nnome: " + this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncpf: " + cpf + ",\neducacao: " + educacao + ",\ngenero: "
+				+ genero + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
 	}
 
-	public double calculaScore() {
-		long idade = ChronoUnit.YEARS.between(this.dataNascimento, LocalDate.now());
-		double valorBase = CalcSeguro.VALOR_BASE.getValor();
-		double quantidadeCarros = this.getListaVeiculos().size();
-		if (idade < 30) return valorBase * CalcSeguro.FATOR_18_30.getValor() * quantidadeCarros;
-		else if(idade >= 30 && idade < 60) return valorBase * CalcSeguro.FATOR_30_60.getValor() * quantidadeCarros;
-		else if(idade >= 60) return valorBase * CalcSeguro.FATOR_60_90.getValor() * quantidadeCarros;
-		return 0;
+	public boolean cadastrarVeiculo() {
+		//TODO
+		return true;
+	}
+
+	public boolean removerVeiculo() {
+		//TODO
+		return true;
 	}
 
 	public static class Validacao {

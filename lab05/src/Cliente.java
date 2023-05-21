@@ -1,14 +1,9 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class Cliente {
 	// Atributos
 	private String nome;
 	private String telefone;
 	private String endereco;
 	private String email;
-	private List<Sinistro> listaSinitros;
-	private List<Seguro> listaSeguros;
 
 	// Construtor
 	public Cliente(String nome, String telefone, String endereco, String email) {
@@ -16,8 +11,6 @@ public abstract class Cliente {
 		this.telefone = telefone;
 		this.endereco = endereco;
 		this.email = email;
-		this.listaSinitros = new ArrayList<Sinistro>();
-		this.listaSeguros = new ArrayList<Seguro>();
 	}
 
 	// Getters and Setters
@@ -53,27 +46,21 @@ public abstract class Cliente {
 		this.email = email;
 	}
 
-	public List<Sinistro> getListaSinitros() {
-		return listaSinitros;
-	}
-
-	public List<Seguro> getListaSeguros() {
-		return listaSeguros;
-	}
-
-	public void setListaSeguros(List<Seguro> listaSeguros) {
-		this.listaSeguros = listaSeguros;
+	//toString override
+	@Override
+	public String toString() {
+		return "{\nnome: " + nome + ",\nendereco: " + endereco + "\n}";
 	}
 
 	// Obtém o CPF/CNPJ correspondente do cliente
 	public String getCodigo() {
 		if (this instanceof ClientePF) {
 			ClientePF clientePF = (ClientePF) this;
-			return clientePF.getCpf();
+			return clientePF.getCodigo();
 		}
 		else if (this instanceof ClientePJ) {
 			ClientePJ clientePJ = (ClientePJ) this;
-			return clientePJ.getCnpj();
+			return clientePJ.getCodigo();
 		}
 		return "";
 	}
