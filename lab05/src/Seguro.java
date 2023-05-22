@@ -2,6 +2,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -81,16 +82,37 @@ public abstract class Seguro {
         this.valorMensal = valorMensal;
     }
 
-    public void autorizarCondutor() {
-        // TODO
+    public boolean autorizarCondutor(Condutor condutor) {
+        if (Collections.binarySearch(listaCondutores, condutor, (a, b) -> {
+			return a.getCpf().compareTo(b.getCpf());
+		}) >= 0) return false;
+
+        listaCondutores.add(condutor);
+        Collections.sort(listaCondutores, (a, b) -> {
+            return a.getCpf().compareTo(b.getCpf());
+        });
+        return true;
     }
     
-    public void desautorizarCondutor() {
-        // TODO
+    public boolean desautorizarCondutor(String cpf) {
+        int index = Collections.binarySearch(listaCondutores, new Condutor(cpf, "", "", "", ""), (a, b) -> {
+            return a.getCpf().compareTo(b.getCpf());
+        });
+        if (index < 0 || index >= listaCondutores.size()) return false;
+
+        listaCondutores.remove(index);
+        return true;
     }
 
-    public void gerarSinistro() {
-        // TODO
+    public boolean gerarSinistro(String data, String endereco, String cpf) {
+        int index = Collections.binarySearch(listaCondutores, new Condutor(cpf, "", "", "", ""), (a, b) -> {
+            return a.getCpf().compareTo(b.getCpf());
+        });
+        if (index < 0 || index >= listaCondutores.size()) return false;
+
+        Sinistro sinistro = new Sinistro(data, endereco, listaCondutores.get(index), this);
+        listaSinistros.add(sinistro);
+        return true;
     }
 
     public abstract void calcularValor();

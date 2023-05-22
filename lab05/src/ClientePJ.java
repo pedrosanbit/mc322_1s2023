@@ -51,18 +51,30 @@ public class ClientePJ extends Cliente {
         return listaFrota;
     }
 
-    public boolean cadastrarFrota() {
-        //TODO
+    public boolean cadastrarFrota(Veiculo veiculo) {
+        Frota frota = new Frota();
+        frota.getListaVeiculos().add(veiculo);
+        listaFrota.add(frota);
         return true;
     }
     
-    public boolean atualizarFrota() {
-        //TODO
+    public boolean atualizarFrota(Veiculo veiculo, String code) {
+        int i;
+        for (i = 0; i < listaFrota.size(); i++) {
+            if (listaFrota.get(i).getCode().equals(code)) break;
+        }
+        if (i >= listaFrota.size()) return false;
+        listaFrota.get(i).getListaVeiculos().add(veiculo);
         return true;
     }
 
-    public boolean getVeiculosPorFrota() {
-        //TODO
+    public boolean getVeiculosPorFrota(String code) {
+        int i;
+        for (i = 0; i < listaFrota.size(); i++) {
+            if (listaFrota.get(i).getCode().equals(code)) break;
+        }
+        if (i >= listaFrota.size()) return false;
+        System.out.println(listaFrota.get(i).getListaVeiculos());
         return true;
     }
 

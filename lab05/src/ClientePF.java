@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collections;
 import java.util.List;
 
 public class ClientePF extends Cliente {
@@ -66,13 +67,25 @@ public class ClientePF extends Cliente {
 				+ genero + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
 	}
 
-	public boolean cadastrarVeiculo() {
-		//TODO
+	public boolean cadastrarVeiculo(Veiculo veiculo) {
+		if (Collections.binarySearch(listaVeiculos, veiculo, (a, b) -> {
+			return a.getPlaca().compareTo(b.getPlaca());
+		}) >= 0) return false;
+
+		listaVeiculos.add(veiculo);
+		Collections.sort(listaVeiculos, (a, b) -> {
+			return a.getPlaca().compareTo(b.getPlaca());
+		});
 		return true;
 	}
 
-	public boolean removerVeiculo() {
-		//TODO
+	public boolean removerVeiculo(String placa) {
+		int index = Collections.binarySearch(listaVeiculos, new Veiculo(placa, "", "", 0), (a, b) -> {
+			return a.getPlaca().compareTo(b.getPlaca());
+		});
+		if (index < 0 || index >= listaVeiculos.size()) return false;
+
+		listaVeiculos.remove(index);
 		return true;
 	}
 

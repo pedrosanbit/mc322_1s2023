@@ -69,7 +69,7 @@ public class Condutor {
         return listaSinistros;
     }  
     
-    public void adicionarSinistro() {
-        //TODO
+    public void adicionarSinistro(Sinistro sinistro) {
+        listaSinistros.add(sinistro);
     }
 }
