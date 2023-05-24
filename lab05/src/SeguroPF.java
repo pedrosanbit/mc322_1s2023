@@ -26,6 +26,11 @@ public class SeguroPF extends Seguro {
     }
 
     @Override
+    public String toString() {
+        return "{\nveiculo: " + veiculo + ",\ncliente: " + cliente + "\n}";
+    }
+
+    @Override
     public void calcularValor() {
         // TODO
     }

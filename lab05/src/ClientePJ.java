@@ -13,7 +13,7 @@ public class ClientePJ extends Cliente {
 
     // Construtor
     public ClientePJ(String nome, String telefone, String endereco, String email, String cnpj, String dataFundacao,
-            int qtdeFuncionarios, List<Frota> listaFrota) {
+            int qtdeFuncionarios) {
         super(nome, telefone, endereco, email);
         this.cnpj = cnpj;
         this.qtdeFuncionarios = qtdeFuncionarios;

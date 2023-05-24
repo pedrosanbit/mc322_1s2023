@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Seguradora {
@@ -74,40 +75,126 @@ public class Seguradora {
 	}
 
 	public void listarClientes() {
-		//TODO
+		for (Cliente cliente : listaClientes) {
+			System.out.println(cliente);
+		}
 	}
 
-	public boolean gerarSeguro() {
-		//TODO
+	public boolean gerarSeguro(String dataInicio, String dataFim, int valorMensal, Veiculo veiculo, ClientePF cliente) {
+		for (Seguro seguro : listaSeguros) {
+			if (seguro instanceof SeguroPF) {
+				SeguroPF seguroPf = (SeguroPF) seguro;
+				if (seguroPf.getCliente().equals(cliente) && seguroPf.getVeiculo().equals(veiculo)) return false;
+			}
+		}
+		Seguro seguro = new SeguroPF(dataInicio, dataFim, this, valorMensal, veiculo, cliente);
+		listaSeguros.add(seguro);
 		return true;
 	}
 
-	public boolean cancelarSeguro() {
-		//TODO
+	public boolean gerarSeguro(String dataInicio, String dataFim, int valorMensal, Frota frota, ClientePJ cliente) {
+		for (Seguro seguro : listaSeguros) {
+			if (seguro instanceof SeguroPJ) {
+				SeguroPJ seguroPj = (SeguroPJ) seguro;
+				if (seguroPj.getCliente().equals(cliente) && seguroPj.getFrota().equals(frota)) return false;
+			}
+		}
+		Seguro seguro = new SeguroPJ(dataInicio, dataFim, this, valorMensal, frota, cliente);
+		listaSeguros.add(seguro);
 		return true;
 	}
 
-	public boolean cadastrarCliente() {
-		//TODO
+	public boolean cancelarSeguro(int id) {
+		for (int i = 0; i < listaSeguros.size(); i++) {
+			if (listaSeguros.get(i).getId() == id) {
+				listaSeguros.remove(i);
+				return true;
+			}
+		} 
+		return false;
+	}
+
+	public boolean cadastrarCliente(String nome, String telefone, String endereco, String email, String cpf, String genero, String educacao, String dataNascimento) {
+		if (Collections.binarySearch(listaClientes, new ClientePF("","", "", "", cpf, "", "", ""), new ClienteComparator()) >= 0) return false;
+		Cliente cliente = new ClientePF(nome, telefone, endereco, email, cpf, genero, educacao, dataNascimento);
+		listaClientes.add(cliente);
+		listaClientes.sort(new ClienteComparator());
 		return true;
 	}
 
-	public boolean removerCliente() {
-		//TODO
+	public boolean cadastrarCliente(String nome, String telefone, String endereco, String email, String cnpj, String dataFundacao, int qtdeFuncionarios) {
+		if (Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", cnpj, "", 0), new ClienteComparator()) >= 0) return false;
+		Cliente cliente = new ClientePJ(nome, telefone, endereco, email, cnpj, dataFundacao, qtdeFuncionarios);
+		listaClientes.add(cliente);
+		listaClientes.sort(new ClienteComparator());
 		return true;
 	}
 
-	public List<Seguro> getSegurosPorCliente() {
-		//TODO
-		return new ArrayList<Seguro>();
+	public boolean removerCliente(String codigo) {
+		try {
+			String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
+			int index = -1;
+			if (numbersOnlyCode.length() == 11) {
+				index = Collections.binarySearch(listaClientes, new ClientePF("", "", "", "", numbersOnlyCode, "", "", ""), new ClienteComparator());
+			}
+			else if (numbersOnlyCode.length() == 14) {
+				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", numbersOnlyCode, "", 0), new ClienteComparator());
+			}
+			if (index < 0 || index >= listaClientes.size()) return false;
+
+			listaClientes.remove(index);
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 
-	public List<Sinistro> getSinistrosPorCliente() {
-		//TODO
-		return new ArrayList<Sinistro>();
+	public List<Seguro> getSegurosPorCliente(String codigo) {
+		try {
+			String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
+			int index = -1;
+			if (numbersOnlyCode.length() == 11) {
+				index = Collections.binarySearch(listaClientes, new ClientePF("", "", "", "", numbersOnlyCode, "", "", ""), new ClienteComparator());
+			}
+			else if (numbersOnlyCode.length() == 14) {
+				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", numbersOnlyCode, "", 0), new ClienteComparator());
+			}
+			if (index < 0 || index >= listaClientes.size()) return new ArrayList<Seguro>();
+
+			Cliente cliente = listaClientes.get(index);
+			List<Seguro> segurosCliente = new ArrayList<Seguro>();
+			for (Seguro seguro : listaSeguros) {
+				if (cliente instanceof ClientePF && seguro instanceof SeguroPF) {
+					SeguroPF seguroPF = (SeguroPF) seguro;
+					if (seguroPF.getCliente().equals(cliente)) segurosCliente.add(seguroPF);
+				}
+				else if (cliente instanceof ClientePJ && seguro instanceof SeguroPJ) {
+					SeguroPJ seguroPJ = (SeguroPJ) seguro;
+					if (seguroPJ.getCliente().equals(cliente)) segurosCliente.add(seguroPJ);
+				}
+			}
+			return segurosCliente;
+		}
+		catch (Exception e) {
+			return new ArrayList<Seguro>();
+		}
+	}
+
+	public List<Sinistro> getSinistrosPorCliente(String codigo) {
+		List<Seguro> segurosCliente = getSegurosPorCliente(codigo);
+		List<Sinistro> sinistrosCliente = new ArrayList<Sinistro>();
+		for (Seguro seguro : segurosCliente) {
+			for (Sinistro sinistro : seguro.getListaSinistros()) sinistrosCliente.add(sinistro);
+		}
+		return sinistrosCliente;
 	}
 
 	public void calcularReceita() {
-		//TODO
+		int receita = 0;
+		for (Seguro seguro : listaSeguros) {
+			receita += seguro.getValorMensal();
+		}
+		System.out.println(receita);
 	}
 }

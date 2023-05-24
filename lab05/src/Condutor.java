@@ -72,4 +72,12 @@ public class Condutor {
     public void adicionarSinistro(Sinistro sinistro) {
         listaSinistros.add(sinistro);
     }
+
+    //toString override
+    @Override
+    public String toString() {
+        return "{\ncpf: " + cpf + ",\nnome: " + nome + ",\ntelefone: " + telefone + ",\nemail: " + email + ",\ndataNasc: "
+                + dataNasc.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ",\n listaSinistros: " + listaSinistros + "\n}";
+    }
+    
 }

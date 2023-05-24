@@ -25,6 +25,11 @@ public class Frota {
         return listaVeiculos;
     }
 
+    @Override
+    public String toString() {
+        return "{\ncode: " + code + ",\nlistaVeiculos: " + listaVeiculos + "\n}";
+    }
+
     public boolean addVeiculo(Veiculo veiculo) {
         if (Collections.binarySearch(listaVeiculos, veiculo, (a, b) -> {
 			return a.getPlaca().compareTo(b.getPlaca());

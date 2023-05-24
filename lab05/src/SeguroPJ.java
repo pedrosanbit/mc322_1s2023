@@ -26,6 +26,11 @@ public class SeguroPJ extends Seguro {
     }
 
     @Override
+    public String toString() {
+        return "{\nfrota: " + frota + ",\ncliente: " + cliente + "\n}";
+    }
+
+    @Override
     public void calcularValor() {
         // TODO
     }
