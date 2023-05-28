@@ -142,6 +142,7 @@ public class Seguradora {
 			}
 			if (index < 0 || index >= listaClientes.size()) return false;
 
+			Cliente cliente = listaClientes.get(index);
 			listaClientes.remove(index);
 			return true;
 		}

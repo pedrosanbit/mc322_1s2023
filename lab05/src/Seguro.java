@@ -100,6 +100,10 @@ public abstract class Seguro {
         });
         if (index < 0 || index >= listaCondutores.size()) return false;
 
+        listaCondutores.get(index).getListaSinistros().clear();
+        for (int i = 0; i < listaSinistros.size(); i++) {
+            if (listaSinistros.get(i).getCondutor().equals(listaCondutores.get(index))) listaSinistros.remove(i);
+        }
         listaCondutores.remove(index);
         return true;
     }
@@ -115,5 +119,5 @@ public abstract class Seguro {
         return true;
     }
 
-    public abstract void calcularValor();
+    public abstract double calcularValor();
 }
