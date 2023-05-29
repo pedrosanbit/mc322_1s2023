@@ -143,6 +143,23 @@ public class Seguradora {
 			if (index < 0 || index >= listaClientes.size()) return false;
 
 			Cliente cliente = listaClientes.get(index);
+			for (int i = 0; i < listaSeguros.size(); i++) {
+				Seguro seguro = listaSeguros.get(i);
+				if (cliente instanceof ClientePF && seguro instanceof SeguroPF) {
+					SeguroPF seguroPF = (SeguroPF) seguro;
+					if (seguroPF.getCliente().equals(cliente)) {
+						listaSeguros.remove(i);
+						continue;
+					}
+				}
+				else if (cliente instanceof ClientePJ && seguro instanceof SeguroPJ) {
+					SeguroPJ seguroPJ = (SeguroPJ) seguro;
+					if (seguroPJ.getCliente().equals(cliente)) {
+						listaSeguros.remove(i);
+						continue;
+					}
+				}
+			}
 			listaClientes.remove(index);
 			return true;
 		}
