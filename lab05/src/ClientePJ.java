@@ -54,6 +54,9 @@ public class ClientePJ extends Cliente {
     public boolean cadastrarFrota(Veiculo veiculo) {
         Frota frota = new Frota();
         frota.getListaVeiculos().add(veiculo);
+        frota.getListaVeiculos().sort((a,b) -> {
+            return a.getPlaca().compareTo(b.getPlaca());
+        });
         listaFrota.add(frota);
         return true;
     }

@@ -114,17 +114,8 @@ public class Seguradora {
 		return false;
 	}
 
-	public boolean cadastrarCliente(String nome, String telefone, String endereco, String email, String cpf, String genero, String educacao, String dataNascimento) {
-		if (Collections.binarySearch(listaClientes, new ClientePF("","", "", "", cpf, "", "", ""), new ClienteComparator()) >= 0) return false;
-		Cliente cliente = new ClientePF(nome, telefone, endereco, email, cpf, genero, educacao, dataNascimento);
-		listaClientes.add(cliente);
-		listaClientes.sort(new ClienteComparator());
-		return true;
-	}
-
-	public boolean cadastrarCliente(String nome, String telefone, String endereco, String email, String cnpj, String dataFundacao, int qtdeFuncionarios) {
-		if (Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", cnpj, "", 0), new ClienteComparator()) >= 0) return false;
-		Cliente cliente = new ClientePJ(nome, telefone, endereco, email, cnpj, dataFundacao, qtdeFuncionarios);
+	public boolean cadastrarCliente(Cliente cliente) {
+		if (Collections.binarySearch(listaClientes, cliente, new ClienteComparator()) >= 0) return false;
 		listaClientes.add(cliente);
 		listaClientes.sort(new ClienteComparator());
 		return true;

@@ -8,20 +8,25 @@ public enum MenuOperacoes {
     CADASTRAR_CLIENTE_PJ(1,2),
     CADASTRAR_VEICULO_PF(1,3),
     CADASTRAR_VEICULO_FROTA(1,4),
-    CADASTRAR_SEGURADORA(1,5),
-    VOLTAR_CADASTRAR(1,6),
+    CADASTRAR_CONDUTOR(1,5),
+    CADASTRAR_SEGURO(1,6)
+    CADASTRAR_SEGURADORA(1,7),
+    VOLTAR_CADASTRAR(1,8),
     LISTAR(2,0),
     LISTAR_CLIENTE_POR_SEGURADORA(2,1),
     LISTAR_SINISTROS_POR_SEGURADORA(2,2),
     LISTAR_SINISTROS_POR_CLIENTE(2,3),
     LISTAR_VEICULOS_POR_CLIENTE(2,4),
     LISTAR_VEICULOS_POR_SEGURADORA(2,5),
-    VOLTAR_LISTAR(2,6),
+    LISTAR_SEGUROS_POR_SEGURADORA(2,6),
+    VOLTAR_LISTAR(2,7),
     EXCLUIR(3,0),
     EXCLUIR_CLIENTE(3,1),
     EXCLUIR_VEICULO(3,2),
     EXCLUIR_SINISTRO(3,3),
-    VOLTAR_EXCLUIR(3,4),
+    EXCLUIR_CONDUTOR(3,4),
+    EXCLUIR_SEGURO(3,5),
+    VOLTAR_EXCLUIR(3,6),
     GERAR_SINISTRO(4,0),
     TRANSFERIR_SEGURO(5,0),
     CALCULAR_RECEITA_SEGURADORA(6,0),
@@ -49,7 +54,7 @@ public enum MenuOperacoes {
     }
 
     private static void cadastrar() {
-        System.out.println("1.1 - Cadastrar Cliente PF\n1.2 - Cadastrar Cliente PJ\n1.3 - Cadastrar Veiculo\n1.4 - Cadastrar Seguradora\n1.5 - Voltar");
+        System.out.println("1.1 - Cadastrar Cliente PF\n1.2 - Cadastrar Cliente PJ\n1.3 - Cadastrar Veiculo PF\n1.4 - Cadastrar Veículo Frota\n1.5 Cadastrar Condutor\n1.6 Cadastrar Seguro\n1.7 - Cadastrar Seguradora\n1.8 - Voltar");
     }
 
     private static ClientePF cadastrarClientePF(Scanner scanner) {
@@ -96,13 +101,17 @@ public enum MenuOperacoes {
         }
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = scanner.nextLine();
         System.out.print("Endereço: ");
         String endereco = scanner.nextLine();
+        System.out.print("E-mail: ");
+        String email = scanner.nextLine();
         System.out.print("Data de Fundação: ");
         String dataFundacao = scanner.nextLine();
         System.out.print("Quantidade de Funcionários: ");
         int quantidadeFuncionarios = Integer.parseInt(scanner.nextLine());
-        ClientePJ clientePJ = new ClientePJ(nome, endereco, cnpj, dataFundacao, quantidadeFuncionarios);
+        ClientePJ clientePJ = new ClientePJ(nome, telefone, endereco, email, cnpj, dataFundacao, quantidadeFuncionarios);
         return clientePJ;
     }
 
@@ -125,7 +134,79 @@ public enum MenuOperacoes {
         return veiculo;
     }
 
+    private static Condutor cadastrarCondutor(Scanner scanner) {
+        ClientePJ.Validacao cnpjValidator = new ClientePJ.Validacao();
+        System.out.print("CNPJ: ");
+        String cnpj = scanner.nextLine();
+        while (!cnpjValidator.validarCodigo(cnpj)) {
+            System.out.println("CNPJ inválido. Por favor insira um CNPJ válido.");
+            System.out.print("CNPJ: ");
+            cnpj = scanner.nextLine();
+        }
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = scanner.nextLine();
+        System.out.print("E-mail: ");
+        String email = scanner.nextLine();
+        System.out.print("Data de Nascimento: ");
+        String dataNascimento = scanner.nextLine();
+        return new Condutor(cnpj, nome, telefone, email, dataNascimento);
+    }
+
+    private static Seguro cadastrarSeguro(List<Seguradora> listaSeguradoras, Scanner scanner) {
+        System.out.print("Data de Início: ");
+        String dataInicio = scanner.nextLine();
+        System.out.print("Data de Fim: ");
+        String dataFim = scanner.nextLine();
+        System.out.print("Valor Mensal: ");
+        int valorMensal = Integer.parseInt(scanner.nextLine());
+        System.out.print("CNPJ da Seguradora: ");
+        String cnpj = scanner.nextLine();
+        int index1 = Collections.binarySearch(listaSeguradoras, new Seguradora(cnpj, "", "", "", ""), (a, b) -> {
+            return a.getCnpj().compareTo(b.getCnpj());
+        });
+        Seguradora seguradora = listaSeguradoras.get(index1);
+        System.out.print("CPF/CNPJ do Cliente: ");
+        String codigoCliente = scanner.nextLine();
+        String numbersOnlyCode = codigoCliente.replaceAll("[^0-9]", "");
+        int index2 = -1;
+        Seguro seguro;
+        if (numbersOnlyCode.length() == 11) {
+			index2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", codigoCliente, "", "", "", "", ""), new ClienteComparator());
+            ClientePF cliente = (ClientePF) seguradora.getListaClientes().get(index2);
+            System.out.print("Placa do Veículo: ");
+            String placa = scanner.nextLine();
+            int index3 = Collections.binarySearch(cliente.getListaVeiculos(), new Veiculo(placa, "", "", 0), (a,b) -> {
+                return a.getPlaca().compareTo(b.getPlaca());
+            });
+            Veiculo veiculo = cliente.getListaVeiculos().get(index3);
+            seguro = new SeguroPF(dataInicio, dataFim, seguradora, valorMensal, veiculo, cliente);
+		}
+		else if (numbersOnlyCode.length() == 14) {
+			index2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", "", "", codigoCliente, "", 0), new ClienteComparator());
+            ClientePJ cliente = (ClientePJ) seguradora.getListaClientes().get(index2);
+            System.out.print("Código da Frota: ");
+            String codigo = scanner.nextLine();
+            int index3;
+            for (index3 = 0; index3 < cliente.getListaFrota().size(); index3++) {
+                if (cliente.getListaFrota().get(index3).getCode() == codigo) break;
+            }
+            Frota frota = cliente.getListaFrota().get(index3);
+            seguro = new SeguroPJ(dataInicio, dataFim, seguradora, valorMensal, frota, cliente);
+		}
+        return seguro;
+    }
+
     private static Seguradora cadastrarSeguradora(Scanner scanner) {
+        ClientePJ.Validacao cnpjValidator = new ClientePJ.Validacao();
+        System.out.print("CNPJ: ");
+        String cnpj = scanner.nextLine();
+        while (!cnpjValidator.validarCodigo(cnpj)) {
+            System.out.println("CNPJ inválido. Por favor insira um CNPJ válido.");
+            System.out.print("CNPJ: ");
+            cnpj = scanner.nextLine();
+        }
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
         System.out.print("Telefone: ");
@@ -134,7 +215,7 @@ public enum MenuOperacoes {
         String email = scanner.nextLine();
         System.out.print("Endereço: ");
         String endereco = scanner.nextLine();
-        Seguradora seguradora = new Seguradora(nome, telefone, email, endereco);
+        Seguradora seguradora = new Seguradora(cnpj, nome, telefone, endereco, email);
         return seguradora;
     }
 
@@ -314,27 +395,81 @@ public enum MenuOperacoes {
                 }
                 else if (operacaoSecundaria == CADASTRAR_CLIENTE_PF.getOperacaoSecundaria()) {
                     ClientePF clientePF = cadastrarClientePF(scanner);
-                    System.out.print("Índice da Seguradora no sistema: ");
-                    int index = Integer.parseInt(scanner.nextLine());
+                    System.out.print("CNPJ da Seguradora: ");
+                    String cnpj = scanner.nextLine();
+                    int index = Collections.binarySearch(listaSeguradoras, new Seguradora(cnpj, "", "", "", ""), (a, b) -> {
+                        return a.getCnpj().compareTo(b.getCnpj());
+                    });
                     listaSeguradoras.get(index).cadastrarCliente(clientePF);
                     operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
                     operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
                 }
                 else if (operacaoSecundaria == CADASTRAR_CLIENTE_PJ.getOperacaoSecundaria()) {
                     ClientePJ clientePJ = cadastrarClientePJ(scanner);
-                    System.out.print("Índice da Seguradora no sistema: ");
-                    int index = Integer.parseInt(scanner.nextLine());
+                    System.out.print("CNPJ da Seguradora: ");
+                    String cnpj = scanner.nextLine();
+                    int index = Collections.binarySearch(listaSeguradoras, new Seguradora(cnpj, "", "", "", ""), (a, b) -> {
+                        return a.getCnpj().compareTo(b.getCnpj());
+                    });
                     listaSeguradoras.get(index).cadastrarCliente(clientePJ);
                     operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
                     operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
                 }
-                else if (operacaoSecundaria == CADASTRAR_VEICULO.getOperacaoSecundaria()) {
+                else if (operacaoSecundaria == CADASTRAR_VEICULO_PF.getOperacaoSecundaria()) {
                     Veiculo veiculo = cadastrarVeiculo(scanner);
-                    System.out.print("Índice da Seguradora no sistema: ");
-                    int index1 = Integer.parseInt(scanner.nextLine());
-                    System.out.print("Índice do Cliente na Seguradora: ");
-                    int index2 = Integer.parseInt(scanner.nextLine());
-                    listaSeguradoras.get(index1).getListaClientes().get(index2).adicionarVeiculo(veiculo);
+                    System.out.print("CNPJ da Seguradora: ");
+                    String cnpj = scanner.nextLine();
+                    int index1 = Collections.binarySearch(listaSeguradoras, new Seguradora(cnpj, "", "", "", ""), (a, b) -> {
+                        return a.getCnpj().compareTo(b.getCnpj());
+                    });
+                    System.out.print("CPF do Cliente: ");
+                    String cpf = scanner.nextLine();
+                    int index2 = Collections.binarySearch(listaSeguradoras.get(index1).getListaClientes(), new ClientePF("", "", "", "", cpf, "", "", ""), new ClienteComparator());
+                    ((ClientePF) listaSeguradoras.get(index1).getListaClientes().get(index2)).cadastrarVeiculo(veiculo);
+                    operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
+                    operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
+                }
+                else if (operacaoSecundaria == CADASTRAR_VEICULO_FROTA.getOperacaoSecundaria()) {
+                    Veiculo veiculo = cadastrarVeiculo(scanner);
+                    System.out.print("CNPJ da Seguradora: ");
+                    String cnpj = scanner.nextLine();
+                    int index1 = Collections.binarySearch(listaSeguradoras, new Seguradora(cnpj, "", "", "", ""), (a, b) -> {
+                        return a.getCnpj().compareTo(b.getCnpj());
+                    });
+                    System.out.print("CNPJ do Cliente: ");
+                    String cnpjCliente = scanner.nextLine();
+                    int index2 = Collections.binarySearch(listaSeguradoras.get(index1).getListaClientes(), new ClientePJ("", "", "", "", cnpjCliente, "", 0), new ClienteComparator());
+                    List<Frota> listaFrotas = ((ClientePJ) listaSeguradoras.get(index1).getListaClientes().get(index2)).getListaFrota();
+                    System.out.print("Código da Frota do Cliente: ");
+                    String codigo = scanner.nextLine();
+                    int index3;
+                    for (index3 = 0; index3 < listaFrotas.size(); index3++) {
+                        if (listaFrotas.get(index3).getCode().equals(codigo)) break;
+                    }
+                    ((ClientePJ) listaSeguradoras.get(index1).getListaClientes().get(index2)).getListaFrota().get(index3).addVeiculo(veiculo);
+                    operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
+                    operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
+                }
+                else if (operacaoSecundaria == CADASTRAR_CONDUTOR.getOperacaoSecundaria()) {
+                    Condutor condutor = cadastrarCondutor(scanner);
+                    System.out.print("CNPJ da Seguradora: ");
+                    String cnpj = scanner.nextLine();
+                    int index1 = Collections.binarySearch(listaSeguradoras, new Seguradora(cnpj, "", "", "", ""), (a, b) -> {
+                        return a.getCnpj().compareTo(b.getCnpj());
+                    });
+                    List<Seguro> listaSeguros = listaSeguradoras.get(index1).getListaSeguros();
+                    System.out.print("ID do Seguro: ");
+                    int id = Integer.parseInt(scanner.nextLine());
+                    int index2;
+                    for (index2 = 0; index2 < listaSeguros.size(); index2++) {
+                        if (listaSeguros.get(index2).getId() == id) break;
+                    }
+                    listaSeguradoras.get(index1).getListaSeguros().get(index2).autorizarCondutor(condutor);
+                    operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
+                    operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
+                }
+                else if (operacaoSecundaria == CADASTRAR_SEGURO.getOperacaoSecundaria()) {
+                    Seguro seguro = cadastrarSeguro(listaSeguradoras, scanner);
                     operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
                     operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
                 }
