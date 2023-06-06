@@ -30,6 +30,7 @@ public class Frota {
         return "{\ncode: " + code + ",\nlistaVeiculos: " + listaVeiculos + "\n}";
     }
 
+    // Adiciona um Veículo à Frota
     public boolean addVeiculo(Veiculo veiculo) {
         if (Collections.binarySearch(listaVeiculos, veiculo, (a, b) -> {
 			return a.getPlaca().compareTo(b.getPlaca());
@@ -42,6 +43,7 @@ public class Frota {
         return true;
     }
 
+    // Remove um veículo da Frota pela sua placa
     public boolean removeVeiculo(String placa) {
         int index = Collections.binarySearch(listaVeiculos, new Veiculo(placa, "", "", 0), (a, b) -> {
 			return a.getPlaca().compareTo(b.getPlaca());

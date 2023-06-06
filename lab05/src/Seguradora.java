@@ -1,6 +1,8 @@
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class Seguradora {
 	// Atributos
@@ -74,12 +76,14 @@ public class Seguradora {
 		return "{\nnome: " + nome + ",\ntelefone: " + telefone + ",\nemail: " + email + ",\nendereco: " + endereco + ",\nclientes: " + listaClientes + "\nseguros: " + listaSeguros + "\n}";
 	}
 
+	// Exibe uma lista com os Clientes associados à Seguradora
 	public void listarClientes() {
 		for (Cliente cliente : listaClientes) {
 			System.out.println(cliente);
 		}
 	}
 
+	// Gera um novo Seguro de Pessoa Física associado à Seguradora
 	public boolean gerarSeguro(String dataInicio, String dataFim, int valorMensal, Veiculo veiculo, ClientePF cliente) {
 		for (Seguro seguro : listaSeguros) {
 			if (seguro instanceof SeguroPF) {
@@ -92,6 +96,7 @@ public class Seguradora {
 		return true;
 	}
 
+	// Gera um novo Seguro de Pessoa Jurídica associado à Seguradora
 	public boolean gerarSeguro(String dataInicio, String dataFim, int valorMensal, Frota frota, ClientePJ cliente) {
 		for (Seguro seguro : listaSeguros) {
 			if (seguro instanceof SeguroPJ) {
@@ -104,6 +109,7 @@ public class Seguradora {
 		return true;
 	}
 
+	// Cancela um Seguro associado à Seguradora pelo seu ID
 	public boolean cancelarSeguro(int id) {
 		for (int i = 0; i < listaSeguros.size(); i++) {
 			if (listaSeguros.get(i).getId() == id) {
@@ -114,6 +120,7 @@ public class Seguradora {
 		return false;
 	}
 
+	// Cadastra um novo Cliente à Seguradora
 	public boolean cadastrarCliente(Cliente cliente) {
 		if (Collections.binarySearch(listaClientes, cliente, new ClienteComparator()) >= 0) return false;
 		listaClientes.add(cliente);
@@ -121,15 +128,16 @@ public class Seguradora {
 		return true;
 	}
 
+	// Remove um Cliente da Seguradora pelo seu CPF/CNPJ
 	public boolean removerCliente(String codigo) {
 		try {
 			String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
 			int index = -1;
 			if (numbersOnlyCode.length() == 11) {
-				index = Collections.binarySearch(listaClientes, new ClientePF("", "", "", "", numbersOnlyCode, "", "", ""), new ClienteComparator());
+				index = Collections.binarySearch(listaClientes, new ClientePF("", "", "", "", codigo, "", "", ""), new ClienteComparator());
 			}
 			else if (numbersOnlyCode.length() == 14) {
-				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", numbersOnlyCode, "", 0), new ClienteComparator());
+				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", codigo, "", 0), new ClienteComparator());
 			}
 			if (index < 0 || index >= listaClientes.size()) return false;
 
@@ -159,26 +167,27 @@ public class Seguradora {
 		}
 	}
 
+	// Obtém uma lista de Seguros associados a um Cliente da Seguradora pelo seu CPF/CNPJ
 	public List<Seguro> getSegurosPorCliente(String codigo) {
 		try {
 			String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
 			int index = -1;
 			if (numbersOnlyCode.length() == 11) {
-				index = Collections.binarySearch(listaClientes, new ClientePF("", "", "", "", numbersOnlyCode, "", "", ""), new ClienteComparator());
+				index = Collections.binarySearch(listaClientes, new ClientePF("", "", "", "", codigo, "", "", ""), new ClienteComparator());
 			}
 			else if (numbersOnlyCode.length() == 14) {
-				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", numbersOnlyCode, "", 0), new ClienteComparator());
+				index = Collections.binarySearch(listaClientes, new ClientePJ("", "", "", "", codigo, "", 0), new ClienteComparator());
 			}
 			if (index < 0 || index >= listaClientes.size()) return new ArrayList<Seguro>();
 
 			Cliente cliente = listaClientes.get(index);
 			List<Seguro> segurosCliente = new ArrayList<Seguro>();
 			for (Seguro seguro : listaSeguros) {
-				if (cliente instanceof ClientePF && seguro instanceof SeguroPF) {
+				if (seguro instanceof SeguroPF) {
 					SeguroPF seguroPF = (SeguroPF) seguro;
 					if (seguroPF.getCliente().equals(cliente)) segurosCliente.add(seguroPF);
 				}
-				else if (cliente instanceof ClientePJ && seguro instanceof SeguroPJ) {
+				else if (seguro instanceof SeguroPJ) {
 					SeguroPJ seguroPJ = (SeguroPJ) seguro;
 					if (seguroPJ.getCliente().equals(cliente)) segurosCliente.add(seguroPJ);
 				}
@@ -190,8 +199,10 @@ public class Seguradora {
 		}
 	}
 
+	// Obtém uma lista de Sinistros associados a um Cliente da Seguradora pelo seu CPF/CNPJ
 	public List<Sinistro> getSinistrosPorCliente(String codigo) {
 		List<Seguro> segurosCliente = getSegurosPorCliente(codigo);
+		System.out.println(segurosCliente);
 		List<Sinistro> sinistrosCliente = new ArrayList<Sinistro>();
 		for (Seguro seguro : segurosCliente) {
 			for (Sinistro sinistro : seguro.getListaSinistros()) sinistrosCliente.add(sinistro);
@@ -199,11 +210,15 @@ public class Seguradora {
 		return sinistrosCliente;
 	}
 
+	// Exibe a receita total da Seguradora
 	public void calcularReceita() {
-		int receita = 0;
+		double receita = 0;
+		Locale locale = new Locale("pt", "BR");
+		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+		
 		for (Seguro seguro : listaSeguros) {
-			receita += seguro.getValorMensal();
+			receita += seguro instanceof SeguroPF ? ((SeguroPF) seguro).calcularValor() : seguro instanceof SeguroPJ ? ((SeguroPJ) seguro).calcularValor() : 0;
 		}
-		System.out.println(receita);
+		System.out.println(currencyFormatter.format(receita));
 	}
 }

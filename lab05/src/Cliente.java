@@ -56,11 +56,11 @@ public abstract class Cliente {
 	public String getCodigo() {
 		if (this instanceof ClientePF) {
 			ClientePF clientePF = (ClientePF) this;
-			return clientePF.getCodigo();
+			return clientePF.getCpf();
 		}
 		else if (this instanceof ClientePJ) {
 			ClientePJ clientePJ = (ClientePJ) this;
-			return clientePJ.getCodigo();
+			return clientePJ.getCnpj();
 		}
 		return "";
 	}

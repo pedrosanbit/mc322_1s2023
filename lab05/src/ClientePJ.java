@@ -51,6 +51,7 @@ public class ClientePJ extends Cliente {
         return listaFrota;
     }
 
+    // Adiciona uma Frota com um véiculo a um Cliente
     public boolean cadastrarFrota(Veiculo veiculo) {
         Frota frota = new Frota();
         frota.getListaVeiculos().add(veiculo);
@@ -61,6 +62,7 @@ public class ClientePJ extends Cliente {
         return true;
     }
     
+    // Adiciona um veículo a uma frota do Cliente
     public boolean atualizarFrota(Veiculo veiculo, String code) {
         int i;
         for (i = 0; i < listaFrota.size(); i++) {
@@ -71,6 +73,7 @@ public class ClientePJ extends Cliente {
         return true;
     }
 
+    // Exibe uma lista de Veículos de uma Frota do Cliente
     public boolean getVeiculosPorFrota(String code) {
         int i;
         for (i = 0; i < listaFrota.size(); i++) {

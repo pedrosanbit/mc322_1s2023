@@ -30,9 +30,10 @@ public class SeguroPJ extends Seguro {
 
     @Override
     public String toString() {
-        return "{\nfrota: " + frota + ",\ncliente: " + cliente + "\n}";
+        return "{\nid: " + this.getId() + "\ndataInicio: " + this.getDataInicio() + "\ndataFim: " + this.getDataFim() + "\nvalorMensal: " + this.getValorMensal() + "\nfrota: " + frota + ",\ncliente: " + cliente + "\n}";
     }
 
+    // Obtém o valor associado ao Seguro, fazendo parte da receita da Seguradora
     @Override
     public double calcularValor() {
         double valorBase = CalcSeguro.VALOR_BASE.getValor();

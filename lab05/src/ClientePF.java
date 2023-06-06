@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ClientePF extends Cliente {
 		catch (DateTimeParseException e){
 			this.dataNascimento = LocalDate.MIN;
 		}
+		this.listaVeiculos = new ArrayList<Veiculo>();
 	}
 
 	// Getters and Setter
@@ -67,6 +69,7 @@ public class ClientePF extends Cliente {
 				+ genero + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
 	}
 
+	// Adiciona um veículo associado ao Cliente (Pessoa Física)
 	public boolean cadastrarVeiculo(Veiculo veiculo) {
 		if (Collections.binarySearch(listaVeiculos, veiculo, (a, b) -> {
 			return a.getPlaca().compareTo(b.getPlaca());
@@ -79,6 +82,7 @@ public class ClientePF extends Cliente {
 		return true;
 	}
 
+	// Remove um veículo associado ao Cliente (Pessoa Física) pela sua placa
 	public boolean removerVeiculo(String placa) {
 		int index = Collections.binarySearch(listaVeiculos, new Veiculo(placa, "", "", 0), (a, b) -> {
 			return a.getPlaca().compareTo(b.getPlaca());
