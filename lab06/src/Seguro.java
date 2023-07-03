@@ -97,7 +97,7 @@ public abstract class Seguro {
     
     // Remove um Condutor à lista de condutores do Seguro
     public boolean desautorizarCondutor(String cpf) {
-        int index = Collections.binarySearch(listaCondutores, new Condutor(cpf, "", "", "", ""), (a, b) -> {
+        int index = Collections.binarySearch(listaCondutores, new Condutor(cpf, "", "", "", "", ""), (a, b) -> {
             return a.getCpf().compareTo(b.getCpf());
         });
         if (index < 0 || index >= listaCondutores.size()) return false;
@@ -112,12 +112,13 @@ public abstract class Seguro {
 
     // Gera um novo Sinistro associado ao Seguro
     public boolean gerarSinistro(String data, String endereco, String cpf) {
-        int index = Collections.binarySearch(listaCondutores, new Condutor(cpf, "", "", "", ""), (a, b) -> {
+        int index = Collections.binarySearch(listaCondutores, new Condutor(cpf, "", "", "", "", ""), (a, b) -> {
             return a.getCpf().compareTo(b.getCpf());
         });
         if (index < 0 || index >= listaCondutores.size()) return false;
 
         Sinistro sinistro = new Sinistro(data, endereco, listaCondutores.get(index), this);
+        System.out.println(sinistro);
         listaSinistros.add(sinistro);
         listaCondutores.get(index).adicionarSinistro(sinistro);
         return true;

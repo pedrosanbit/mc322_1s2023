@@ -13,6 +13,13 @@ public class Seguradora {
 	private String email;
 	private List<Cliente> listaClientes;
 	private List<Seguro> listaSeguros;
+	private ArquivoClientePF arquivoClientePF;
+	private ArquivoClientePJ arquivoClientePJ;
+	private ArquivoCondutor arquivoCondutor;
+	private ArquivoFrota arquivoFrota;
+	private ArquivoVeiculo arquivoVeiculo;
+	private ArquivoSeguro arquivoSeguro;
+	private ArquivoSinistro arquivoSinistro;
 
 	// Construtor
 	public Seguradora(String cnpj, String nome, String telefone, String endereco, String email) {
@@ -23,6 +30,13 @@ public class Seguradora {
 		this.email = email;
 		this.listaClientes = new ArrayList<Cliente>();
 		this.listaSeguros = new ArrayList<Seguro>();
+		this.arquivoClientePF = new ArquivoClientePF();
+		this.arquivoClientePJ = new ArquivoClientePJ();
+		this.arquivoCondutor = new ArquivoCondutor();
+		this.arquivoFrota = new ArquivoFrota();
+		this.arquivoVeiculo = new ArquivoVeiculo();
+		this.arquivoSeguro = new ArquivoSeguro();
+		this.arquivoSinistro = new ArquivoSinistro();
 	}
 
 	// Getters and Setters
@@ -69,7 +83,35 @@ public class Seguradora {
 	public List<Seguro> getListaSeguros() {
 		return listaSeguros;
 	}
-	
+
+	public ArquivoClientePF getArquivoClientePF() {
+		return arquivoClientePF;
+	}
+
+	public ArquivoClientePJ getArquivoClientePJ() {
+		return arquivoClientePJ;
+	}
+
+	public ArquivoCondutor getArquivoCondutor() {
+		return arquivoCondutor;
+	}
+
+	public ArquivoFrota getArquivoFrota() {
+		return arquivoFrota;
+	}
+
+	public ArquivoVeiculo getArquivoVeiculo() {
+		return arquivoVeiculo;
+	}
+
+	public ArquivoSeguro getArquivoSeguro() {
+		return arquivoSeguro;
+	}
+
+	public ArquivoSinistro getArquivoSinistro() {
+		return arquivoSinistro;
+	}
+
 	//toString override
 	@Override
 	public String toString() {
@@ -84,7 +126,7 @@ public class Seguradora {
 	}
 
 	// Gera um novo Seguro de Pessoa Física associado à Seguradora
-	public boolean gerarSeguro(String dataInicio, String dataFim, int valorMensal, Veiculo veiculo, ClientePF cliente) {
+	public boolean gerarSeguro(String dataInicio, String dataFim, int valorMensal, Veiculo veiculo, ClientePF cliente) throws Exception {
 		for (Seguro seguro : listaSeguros) {
 			if (seguro instanceof SeguroPF) {
 				SeguroPF seguroPf = (SeguroPF) seguro;
@@ -92,6 +134,11 @@ public class Seguradora {
 			}
 		}
 		Seguro seguro = new SeguroPF(dataInicio, dataFim, this, valorMensal, veiculo, cliente);
+		List<Object> condutores = this.getArquivoCondutor().lerArquivo();
+		condutores.sort((a,b) -> {
+			return ((Condutor) a).getCpf().compareTo(((Condutor) b).getCpf());
+		});
+		for (Object obj: condutores) seguro.getListaCondutores().add((Condutor) obj);
 		listaSeguros.add(seguro);
 		return true;
 	}

@@ -9,18 +9,20 @@ public class Condutor {
     private final String cpf;
     private String nome;
     private String telefone;
+    private String endereco;
     private String email;
     private LocalDate dataNasc;
     private List<Sinistro> listaSinistros;
 
     // Construtor
-    public Condutor(String cpf, String nome, String telefone, String email, String dataNasc) {
+    public Condutor(String cpf, String nome, String telefone, String endereco, String email, String dataNasc) {
         this.cpf = cpf;
         this.nome = nome;
         this.telefone = telefone;
+        this.endereco = endereco;
         this.email = email;
         try {
-			this.dataNasc = LocalDate.parse(dataNasc, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+			this.dataNasc = LocalDate.parse(dataNasc, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		catch (DateTimeParseException e){
 			this.dataNasc = LocalDate.MIN;
@@ -47,6 +49,14 @@ public class Condutor {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public String getEmail() {
@@ -78,7 +88,7 @@ public class Condutor {
     @Override
     public String toString() {
         return "{\ncpf: " + cpf + ",\nnome: " + nome + ",\ntelefone: " + telefone + ",\nemail: " + email + ",\ndataNasc: "
-                + dataNasc.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
+                + dataNasc.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\n}";
     }
     
 }

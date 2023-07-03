@@ -16,9 +16,13 @@ public class Frota {
         this.listaVeiculos = new ArrayList<Veiculo>();
     }
 
-    // Getters
+    // Getters e Setters
     public String getCode() {
         return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public List<Veiculo> getListaVeiculos() {

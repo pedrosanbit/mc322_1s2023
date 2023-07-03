@@ -153,14 +153,16 @@ public enum MenuOperacoes {
         String nome = scanner.nextLine();
         System.out.print("Telefone: ");
         String telefone = scanner.nextLine();
+        System.out.print("Endereço: ");
+        String endereco = scanner.nextLine();
         System.out.print("E-mail: ");
         String email = scanner.nextLine();
         System.out.print("Data de Nascimento: ");
         String dataNascimento = scanner.nextLine();
-        return new Condutor(cpf, nome, telefone, email, dataNascimento);
+        return new Condutor(cpf, nome, telefone, endereco, email, dataNascimento);
     }
 
-    private static void cadastrarSeguro(List<Seguradora> listaSeguradoras, Scanner scanner) {
+    private static void cadastrarSeguro(List<Seguradora> listaSeguradoras, Scanner scanner) throws Exception {
         System.out.print("Data de Início: ");
         String dataInicio = scanner.nextLine();
         System.out.print("Data de Fim: ");
@@ -178,7 +180,7 @@ public enum MenuOperacoes {
         String numbersOnlyCode = codigoCliente.replaceAll("[^0-9]", "");
         int index2 = -1;
         if (numbersOnlyCode.length() == 11) {
-			index2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", codigoCliente, "", "", "", "", ""), new ClienteComparator());
+			index2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF(codigoCliente, "", "", "", "", "", "", ""), new ClienteComparator());
             ClientePF cliente = (ClientePF) seguradora.getListaClientes().get(index2);
             System.out.print("Placa do Veículo: ");
             String placa = scanner.nextLine();
@@ -189,7 +191,7 @@ public enum MenuOperacoes {
             seguradora.gerarSeguro(dataInicio, dataFim, valorMensal, veiculo, cliente);
 		}
 		else if (numbersOnlyCode.length() == 14) {
-			index2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", "", "", codigoCliente, "", 0), new ClienteComparator());
+			index2 = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ(codigoCliente, "", "", "", "", "", 0), new ClienteComparator());
             ClientePJ cliente = (ClientePJ) seguradora.getListaClientes().get(index2);
             System.out.print("Código da Frota: ");
             String codigo = scanner.nextLine();
@@ -304,7 +306,7 @@ public enum MenuOperacoes {
         Seguro seguro = seguradora.getListaSeguros().get(index);
         System.out.print("CPF do Condutor: ");
         String cpf = scanner.nextLine();
-        index = Collections.binarySearch(seguro.getListaCondutores(), new Condutor(cpf, "", "", "", ""), (a,b) -> {
+        index = Collections.binarySearch(seguro.getListaCondutores(), new Condutor(cpf, "", "", "", "", ""), (a,b) -> {
             return a.getCpf().compareTo(b.getCpf());
         });
         Condutor condutor = seguro.getListaCondutores().get(index);
@@ -325,14 +327,14 @@ public enum MenuOperacoes {
         String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
 	    int index = -1;
 		if (numbersOnlyCode.length() == 11) {
-			index = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", "", "", codigo, "", "", ""), new ClienteComparator());
+			index = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF(codigo, "", "", "", "", "", "", ""), new ClienteComparator());
             ClientePF cliente = (ClientePF) seguradora.getListaClientes().get(index);
             for(Veiculo veiculo: cliente.getListaVeiculos()) {
                 System.out.println(veiculo);
             }
 		}
 		else if (numbersOnlyCode.length() == 14) {
-			index = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", "", "", codigo, "", 0), new ClienteComparator());
+			index = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ(codigo, "", "", "", "", "", 0), new ClienteComparator());
             ClientePJ cliente = (ClientePJ) seguradora.getListaClientes().get(index);
             List<Veiculo> veiculos = new ArrayList<Veiculo>();
             for (Frota frota : cliente.getListaFrota()) {
@@ -353,7 +355,7 @@ public enum MenuOperacoes {
         Seguradora seguradora = listaSeguradoras.get(indiceSeguradora);
         System.out.print("CNPJ do cliente: ");
         String codigo = scanner.nextLine();
-        int index = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", "", "", codigo, "", 0), new ClienteComparator());
+        int index = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ(codigo, "", "", "", "", "", 0), new ClienteComparator());
         ClientePJ cliente = (ClientePJ) seguradora.getListaClientes().get(index);
         for (Frota frota : cliente.getListaFrota()) {
             System.out.println(frota);
@@ -451,12 +453,12 @@ public enum MenuOperacoes {
         String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
 	    int indiceCliente = -1;
 		if (numbersOnlyCode.length() == 11) {
-			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", "", "", codigo, "", "", ""), new ClienteComparator());
+			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF(codigo, "", "", "", "", "", "", ""), new ClienteComparator());
             int indexes[] = { indiceSeguradora, indiceCliente };
             return indexes;
 		}
 		else if (numbersOnlyCode.length() == 14) {
-			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", "", "", codigo, "", 0), new ClienteComparator());
+			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ(codigo, "", "", "", "", "", 0), new ClienteComparator());
             ClientePJ cliente = (ClientePJ) seguradora.getListaClientes().get(indiceCliente);
             System.out.print("Código da Frota do Cliente: ");
             String code = scanner.nextLine();
@@ -541,10 +543,10 @@ public enum MenuOperacoes {
         String numbersOnlyCode = codigo.replaceAll("[^0-9]", "");
 	    int indiceCliente = -1;
 		if (numbersOnlyCode.length() == 11) {
-			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF("", "", "", "", codigo, "", "", ""), new ClienteComparator());
+			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePF(codigo, "", "", "", "", "", "", ""), new ClienteComparator());
 		}
 		else if (numbersOnlyCode.length() == 14) {
-			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ("", "", "", "", codigo, "", 0), new ClienteComparator());
+			indiceCliente = Collections.binarySearch(seguradora.getListaClientes(), new ClientePJ(codigo, "", "", "", "", "", 0), new ClienteComparator());
 		}
         int[] indexes = { indiceSeguradora, indiceSeguro, indiceCliente };
         return indexes;
@@ -559,11 +561,11 @@ public enum MenuOperacoes {
         return indiceSeguradora;
     }
 
-    public static void menuOperacoes(List<Seguradora> listaSeguradoras) {
+    public static void menuOperacoes(List<Seguradora> listaSeguradoras) throws Exception {
         Scanner scanner = new Scanner(System.in);
         int operacaoPrimaria = INICIO.getOperacaoPrimaria();
         int operacaoSecundaria = INICIO.getOperacaoSecundaria();
-        while (operacaoPrimaria != 0) {
+        while (operacaoPrimaria != -1) {
             if (operacaoPrimaria == INICIO.getOperacaoPrimaria()) {
                 inicio();
                 operacaoPrimaria = Integer.parseInt(scanner.nextLine());
@@ -604,7 +606,7 @@ public enum MenuOperacoes {
                     });
                     System.out.print("CPF do Cliente: ");
                     String cpf = scanner.nextLine();
-                    int index2 = Collections.binarySearch(listaSeguradoras.get(index1).getListaClientes(), new ClientePF("", "", "", "", cpf, "", "", ""), new ClienteComparator());
+                    int index2 = Collections.binarySearch(listaSeguradoras.get(index1).getListaClientes(), new ClientePF(cpf, "", "", "", "", "", "", ""), new ClienteComparator());
                     ((ClientePF) listaSeguradoras.get(index1).getListaClientes().get(index2)).cadastrarVeiculo(veiculo);
                     operacaoPrimaria = CADASTRAR.getOperacaoPrimaria();
                     operacaoSecundaria = CADASTRAR.getOperacaoSecundaria();
@@ -618,7 +620,7 @@ public enum MenuOperacoes {
                     });
                     System.out.print("CNPJ do Cliente: ");
                     String cnpjCliente = scanner.nextLine();
-                    int index2 = Collections.binarySearch(listaSeguradoras.get(index1).getListaClientes(), new ClientePJ("", "", "", "", cnpjCliente, "", 0), new ClienteComparator());
+                    int index2 = Collections.binarySearch(listaSeguradoras.get(index1).getListaClientes(), new ClientePJ(cnpjCliente, "", "", "", "", "", 0), new ClienteComparator());
                     List<Frota> listaFrotas = ((ClientePJ) listaSeguradoras.get(index1).getListaClientes().get(index2)).getListaFrota();
                     System.out.print("Código da Frota do Cliente: ");
                     String codigo = scanner.nextLine();
@@ -834,6 +836,20 @@ public enum MenuOperacoes {
                 listaSeguradoras.get(calcularReceitaSeguradora(listaSeguradoras, scanner)).calcularReceita();
                 operacaoPrimaria = INICIO.getOperacaoPrimaria();
                 operacaoSecundaria = INICIO.getOperacaoSecundaria();
+            }
+            else if (operacaoPrimaria == 0) {
+                Seguradora seguradora = listaSeguradoras.get(0);
+                List<Object> seguros = new ArrayList<Object>();
+                for (Seguro seguro : seguradora.getListaSeguros()) seguros.add(seguro);
+                List<Object> sinistros = new ArrayList<Object>();
+                for (Seguro seguro : seguradora.getListaSeguros()) {
+                    for (Sinistro sinistro : seguro.getListaSinistros()) {
+                        sinistros.add(sinistro);
+                    }
+                }
+                seguradora.getArquivoSeguro().gravarArquivo(seguros);
+                seguradora.getArquivoSinistro().gravarArquivo(sinistros);
+                operacaoPrimaria = -1;
             }
             else {
                 System.out.println("Operação inválida.");

@@ -1,38 +1,65 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class AppMain {
     public static void main(String[] args) {
-        Veiculo veiculo1 = new Veiculo("DYW5575", "AM Gen", "Hummer Open-Top 6.5 4x4 Diesel TB", 1998);
-        Veiculo veiculo2 = new Veiculo("FOX5305", "Ferrari", "456 GTA", 1997);
-
-        ClientePF clientePF = new ClientePF("Analu Sueli Bernardes", "555555555", "Rua Praia da Penha, 284 - Ponta Grosa, PR", "omail@email.com", "324.469.042-46", "Feminino", "Ensino médio completo", "22/01/1998");
-        ClientePJ clientePJ = new ClientePJ("Stefany e Larissa Corretores Associados Ltda", "9999999999", "Rua Particular, 731 - Jundiaí, SP", "email@email.com", "79.732.528/0001-05", "21/02/2018", 22);
-        clientePF.cadastrarVeiculo(veiculo1);
-        clientePJ.cadastrarFrota(veiculo2);
-
         Seguradora seguradora = new Seguradora("14.607.268/0001-09", "Caroline e Lucas Seguros Ltda", "(19) 3646-1282", "Rua Berto Piccolo, 765 - Campinas, SP", "contato@carolineelucassegurosltda.com.br");
-        seguradora.gerarSeguro("11/11/1991", "02/02/2032", 100, veiculo1, clientePF);
-        seguradora.gerarSeguro("11/11/1991", "02/02/2032", 200, clientePJ.getListaFrota().get(0), clientePJ);
+        try {
+            List<Object> veiculos = seguradora.getArquivoVeiculo().lerArquivo();
+            List<Object> clientesPF = seguradora.getArquivoClientePF().lerArquivo();
+            for (Object obj : clientesPF) {
+                ClientePF clientePF = (ClientePF) obj;
+                Veiculo veiculo = (Veiculo) veiculos.stream().filter(v -> ((Veiculo) v).getPlaca().equals(clientePF.getListaVeiculos().get(0).getPlaca())).findFirst().orElse(null);
+                clientePF.getListaVeiculos().remove(0);
+                clientePF.getListaVeiculos().add(veiculo);
+            }
+            List<Object> frotas = seguradora.getArquivoFrota().lerArquivo();
+            for (Object obj : frotas) {
+                Frota frota = (Frota) obj;
+                Veiculo veiculo1 = (Veiculo) veiculos.stream().filter(v -> ((Veiculo) v).getPlaca().equals(frota.getListaVeiculos().get(0).getPlaca())).findFirst().orElse(null);
+                Veiculo veiculo2 = (Veiculo) veiculos.stream().filter(v -> ((Veiculo) v).getPlaca().equals(frota.getListaVeiculos().get(1).getPlaca())).findFirst().orElse(null);
+                Veiculo veiculo3 = (Veiculo) veiculos.stream().filter(v -> ((Veiculo) v).getPlaca().equals(frota.getListaVeiculos().get(2).getPlaca())).findFirst().orElse(null);
+                frota.getListaVeiculos().remove(0);
+                frota.getListaVeiculos().remove(0);
+                frota.getListaVeiculos().remove(0);
+                frota.addVeiculo(veiculo1);
+                frota.addVeiculo(veiculo2);
+                frota.addVeiculo(veiculo3);
+            }
+            List<Object> clientesPJ = seguradora.getArquivoClientePJ().lerArquivo();
+            for (Object obj : clientesPJ) {
+                ClientePJ clientePJ = (ClientePJ) obj;
+                Frota frota = (Frota) frotas.stream().filter(f -> ((Frota) f).getCode().equals(clientePJ.getListaFrota().get(0).getCode())).findFirst().orElse(null);
+                clientePJ.getListaFrota().remove(0);
+                clientePJ.getListaFrota().add(frota);
+            }
+            for (Object obj: clientesPF) seguradora.getListaClientes().add((ClientePF) obj);
+            for (Object obj: clientesPJ) seguradora.getListaClientes().add((ClientePJ) obj);
+            seguradora.getListaClientes().sort(new ClienteComparator());
 
-        seguradora.cadastrarCliente(clientePF);
-        seguradora.cadastrarCliente(clientePJ);
-
-        Condutor condutor1 = new Condutor("560.200.050-03", "Condutor Um", "888888888", "umemail@email.com", "02/02/1982");
-        Condutor condutor2 = new Condutor("322.159.570-00", "Condutor Dois", "777777777", "doisemail@email.com", "01/01/1971");
-
-        seguradora.getListaSeguros().get(0).autorizarCondutor(condutor1);
-        seguradora.getListaSeguros().get(1).autorizarCondutor(condutor2);
-
-        seguradora.getListaSeguros().get(0).gerarSinistro("02/01/2004", "Rua Pongaí, 528 - Ferraz de Vasconcelos - SP", condutor1.getCpf());
-        seguradora.getListaSeguros().get(0).gerarSinistro("08/12/17", "Rua João Maciel Baião, 793 - São Paulo, SP", condutor2.getCpf());
-
-        seguradora.calcularReceita();
-        System.out.println();
-
-        List<Seguradora> listaSeguradoras = new ArrayList<Seguradora>();
-        listaSeguradoras.add(seguradora);
+            seguradora.calcularReceita();
+            List<Seguradora> listaSeguradoras = new ArrayList<Seguradora>();
+            listaSeguradoras.add(seguradora);
         
-        MenuOperacoes.menuOperacoes(listaSeguradoras);
+            MenuOperacoes.menuOperacoes(listaSeguradoras);
+        }
+        catch (FileNotFoundException ex) {
+            System.out.println("Arquivo não encontrado.");
+        }
+        catch (IOException ex) {
+            System.out.println("Erro de Entrada e Saída.");
+        }
+        catch (NoSuchElementException ex) {
+            System.out.println("Não foi possível seguir com a leitura.");
+        }
+        catch (IndexOutOfBoundsException ex) {
+            System.out.println("Acesso de índice indevido.");
+        }
+        catch (Exception ex) {
+            System.out.println("Ocorreu um erro. Tente novamente.");
+        }
     }
 }

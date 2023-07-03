@@ -14,14 +14,14 @@ public class ClientePF extends Cliente {
 	private List<Veiculo> listaVeiculos;
 
 	// Construtor
-	public ClientePF(String nome, String telefone, String endereco, String email, String cpf, String genero,
+	public ClientePF(String cpf, String nome, String telefone, String endereco, String email, String genero,
 			String educacao, String dataNascimento) {
 		super(nome, telefone, endereco, email);
 		this.cpf = cpf;
 		this.genero = genero;
 		this.educacao = educacao;
 		try {
-			this.dataNascimento = LocalDate.parse(dataNascimento, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+			this.dataNascimento = LocalDate.parse(dataNascimento, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		catch (DateTimeParseException e){
 			this.dataNascimento = LocalDate.MIN;
@@ -66,7 +66,7 @@ public class ClientePF extends Cliente {
 	@Override
 	public String toString() {
 		return "{\nnome: " + this.getNome() + ",\nendereco: " + this.getEndereco() + ",\ncpf: " + cpf + ",\neducacao: " + educacao + ",\ngenero: "
-				+ genero + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n}";
+				+ genero + ",\ndataNascimento: " + dataNascimento.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\n}";
 	}
 
 	// Adiciona um veículo associado ao Cliente (Pessoa Física)
